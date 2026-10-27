@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         cacheDirectory=".phpunit.cache"
+         colors="true"
+         failOnDeprecation="true"
+         failOnWarning="true"
+         failOnRisky="true">
+    <php>
+        <env name="RABBITMQ_HOST" value="localhost" force="true"/>
+        <env name="RABBITMQ_PORT" value="5672" force="true"/>
+        <env name="RABBITMQ_USER" value="test-service" force="true"/>
+        <env name="RABBITMQ_PASSWORD" value="secret" force="true"/>
+        <env name="RABBITMQ_VHOST" value="/" force="true"/>
+        <env name="RABBITMQ_SECURE" value="false" force="true"/>
+        <env name="RABBITMQ_HEARTBEAT" value="60" force="true"/>
+        <env name="RABBITMQ_RETRY" value="10" force="true"/>
+        <env name="RABBITMQ_DELETION_QUEUE" value="test-service-deletion-requests" force="true"/>
+    </php>
+    <testsuites>
+        <testsuite name="default">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
+</phpunit>
