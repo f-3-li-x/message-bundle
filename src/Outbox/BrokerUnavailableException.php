@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Outbox;
+namespace ACAT\MessageBundle\Outbox;
 
 use Throwable;
 use RuntimeException;

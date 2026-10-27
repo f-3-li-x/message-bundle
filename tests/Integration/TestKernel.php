@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Integration;
+namespace ACAT\MessageBundle\Tests\Integration;
 
-use F3lix\MessageBundle\MessageBundle;
+use ACAT\MessageBundle\MessageBundle;
 use Symfony\Component\HttpKernel\Kernel;
-use F3lix\MessageBundle\Outbox\OutboxWriter;
-use F3lix\MessageBundle\Message\BodySerializer;
-use F3lix\MessageBundle\Outbox\OutboxEntryStore;
-use F3lix\MessageBundle\Consumer\RetryingExecutor;
-use F3lix\MessageBundle\Deletion\DeletionRequestSerializer;
+use ACAT\MessageBundle\Outbox\OutboxWriter;
+use ACAT\MessageBundle\Message\BodySerializer;
+use ACAT\MessageBundle\Outbox\OutboxEntryStore;
+use ACAT\MessageBundle\Consumer\RetryingExecutor;
+use ACAT\MessageBundle\Deletion\DeletionRequestSerializer;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;

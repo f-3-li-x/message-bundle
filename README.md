@@ -105,14 +105,14 @@ tests/
     { "type": "vcs", "url": "https://github.com/f-3-li-x/message-bundle.git" }
 ],
 "require": {
-    "f3lix/message-bundle": "^1.0"
+    "acat/message-bundle": "^1.0"
 }
 ```
 
 Bundle in `config/bundles.php` eintragen:
 
 ```php
-F3lix\MessageBundle\MessageBundle::class => ['all' => true],
+ACAT\MessageBundle\MessageBundle::class => ['all' => true],
 ```
 
 Die Tabelle `outbox_entries` entsteht aus dem Mapping des Bundles mit `doctrine:migrations:diff` in den Migrationen des Service.

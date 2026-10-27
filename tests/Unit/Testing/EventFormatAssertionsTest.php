@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Testing;
+namespace ACAT\MessageBundle\Tests\Unit\Testing;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\AssertionFailedError;
-use F3lix\MessageBundle\Testing\EventFormatAssertions;
+use ACAT\MessageBundle\Testing\EventFormatAssertions;
 
 final class EventFormatAssertionsTest extends TestCase
 {

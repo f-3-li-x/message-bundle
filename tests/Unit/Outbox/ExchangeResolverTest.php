@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Outbox;
+namespace ACAT\MessageBundle\Tests\Unit\Outbox;
 
 use PHPUnit\Framework\TestCase;
-use F3lix\MessageBundle\Outbox\ExchangeResolver;
+use ACAT\MessageBundle\Outbox\ExchangeResolver;
 use PHPUnit\Framework\Attributes\DataProvider;
-use F3lix\MessageBundle\DependencyInjection\Configuration;
+use ACAT\MessageBundle\DependencyInjection\Configuration;
 
 final class ExchangeResolverTest extends TestCase
 {

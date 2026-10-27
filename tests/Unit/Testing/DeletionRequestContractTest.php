@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Testing;
+namespace ACAT\MessageBundle\Tests\Unit\Testing;
 
 use JsonException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
-use F3lix\MessageBundle\Deletion\DeletionRequest;
-use F3lix\MessageBundle\Testing\DeletionRequestContract;
+use ACAT\MessageBundle\Deletion\DeletionRequest;
+use ACAT\MessageBundle\Testing\DeletionRequestContract;
 
 /**
  * Bindet den Vertrag des Löschauftrags an einen minimalen Service im Speicher, der den Vertrag erfüllt; zeigt, wie ein

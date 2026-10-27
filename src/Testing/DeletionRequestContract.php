@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Testing;
+namespace ACAT\MessageBundle\Testing;
 
 use JsonException;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\Uid\Uuid;
-use F3lix\MessageBundle\Deletion\DeletionRequest;
+use ACAT\MessageBundle\Deletion\DeletionRequest;
 
 /**
  * Verhalten eines Service beim Löschauftrag, als Tests zum Einbinden in eine Testklasse des Service:

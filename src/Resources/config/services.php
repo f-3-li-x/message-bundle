@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use F3lix\MessageBundle\Message\BodySerializer;
-use F3lix\MessageBundle\Logging\AmqpLogHandler;
-use F3lix\MessageBundle\Connection\RabbitMqConfig;
-use F3lix\MessageBundle\Consumer\RetryingExecutor;
-use F3lix\MessageBundle\Logging\AmqpExchangeFactory;
-use F3lix\MessageBundle\Deletion\DeletionRequestSerializer;
-use F3lix\MessageBundle\Connection\RabbitMqTransportFactory;
-use F3lix\MessageBundle\DependencyInjection\MessageExtension;
-use F3lix\MessageBundle\Logging\AmqpExchangeFactoryInterface;
+use ACAT\MessageBundle\Message\BodySerializer;
+use ACAT\MessageBundle\Logging\AmqpLogHandler;
+use ACAT\MessageBundle\Connection\RabbitMqConfig;
+use ACAT\MessageBundle\Consumer\RetryingExecutor;
+use ACAT\MessageBundle\Logging\AmqpExchangeFactory;
+use ACAT\MessageBundle\Deletion\DeletionRequestSerializer;
+use ACAT\MessageBundle\Connection\RabbitMqTransportFactory;
+use ACAT\MessageBundle\DependencyInjection\MessageExtension;
+use ACAT\MessageBundle\Logging\AmqpExchangeFactoryInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;

@@ -1,5 +1,5 @@
 {
-    "name": "f3lix/message-bundle",
+    "name": "acat/message-bundle",
     "description": "Messaging-Infrastruktur für Symfony-Microservices: Transactional Outbox, RabbitMQ, Retry beim Konsum, Löschaufträge und Logging über AMQP",
     "minimum-stability": "stable",
     "type": "symfony-bundle",
@@ -41,16 +41,16 @@
         "phpunit/phpunit": "^13.4"
     },
     "suggest": {
-        "phpunit/phpunit": "Für die Assertions und Test-Doubles im Namespace F3lix\\MessageBundle\\Testing"
+        "phpunit/phpunit": "Für die Assertions und Test-Doubles im Namespace ACAT\\MessageBundle\\Testing"
     },
     "autoload": {
         "psr-4": {
-            "F3lix\\MessageBundle\\": "src/"
+            "ACAT\\MessageBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "F3lix\\MessageBundle\\Tests\\": "tests/"
+            "ACAT\\MessageBundle\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -59,7 +59,7 @@
     },
     "extra": {
         "symfony": {
-            "bundle": "F3lix\\MessageBundle\\MessageBundle"
+            "bundle": "ACAT\\MessageBundle\\MessageBundle"
         }
     }
 }

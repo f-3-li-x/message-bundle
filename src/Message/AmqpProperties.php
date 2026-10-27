@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Message;
+namespace ACAT\MessageBundle\Message;
 
 /**
  * AMQP-Properties des Nachrichtenformats, für Domain Events wie für Log-Events.

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-use F3lix\MessageBundle\Outbox\OutboxSender;
-use F3lix\MessageBundle\Outbox\OutboxWriter;
-use F3lix\MessageBundle\Outbox\OutboxPublisher;
-use F3lix\MessageBundle\Outbox\ExchangeResolver;
-use F3lix\MessageBundle\Outbox\OutboxEntryStore;
-use F3lix\MessageBundle\Outbox\MessengerOutboxSender;
-use F3lix\MessageBundle\Outbox\DoctrineOutboxEntryStore;
-use F3lix\MessageBundle\Outbox\Command\PublishOutboxCommand;
-use F3lix\MessageBundle\DependencyInjection\MessageExtension;
+use ACAT\MessageBundle\Outbox\OutboxSender;
+use ACAT\MessageBundle\Outbox\OutboxWriter;
+use ACAT\MessageBundle\Outbox\OutboxPublisher;
+use ACAT\MessageBundle\Outbox\ExchangeResolver;
+use ACAT\MessageBundle\Outbox\OutboxEntryStore;
+use ACAT\MessageBundle\Outbox\MessengerOutboxSender;
+use ACAT\MessageBundle\Outbox\DoctrineOutboxEntryStore;
+use ACAT\MessageBundle\Outbox\Command\PublishOutboxCommand;
+use ACAT\MessageBundle\DependencyInjection\MessageExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use F3lix\MessageBundle\Outbox\Command\RetryFailedOutboxCommand;
+use ACAT\MessageBundle\Outbox\Command\RetryFailedOutboxCommand;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Outbox;
+namespace ACAT\MessageBundle\Outbox;
 
 use Throwable;
 use AMQPException;
@@ -12,10 +12,10 @@ use AMQPChannelException;
 use AMQPExchangeException;
 use AMQPConnectionException;
 use Psr\Clock\ClockInterface;
-use F3lix\MessageBundle\Message\RawMessage;
+use ACAT\MessageBundle\Message\RawMessage;
 use Symfony\Component\Messenger\Envelope;
-use F3lix\MessageBundle\Message\AmqpProperties;
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Message\AmqpProperties;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 use Symfony\Component\Messenger\Exception\TransportException;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\Transport\Sender\SenderInterface;

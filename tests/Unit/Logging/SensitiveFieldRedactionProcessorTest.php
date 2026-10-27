@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Logging;
+namespace ACAT\MessageBundle\Tests\Unit\Logging;
 
 use stdClass;
 use Monolog\Level;
@@ -11,7 +11,7 @@ use DateTimeImmutable;
 use Monolog\LogRecord;
 use JsonSerializable;
 use PHPUnit\Framework\TestCase;
-use F3lix\MessageBundle\Logging\SensitiveFieldRedactionProcessor;
+use ACAT\MessageBundle\Logging\SensitiveFieldRedactionProcessor;
 
 final class SensitiveFieldRedactionProcessorTest extends TestCase
 {

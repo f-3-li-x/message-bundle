@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Consumer;
+namespace ACAT\MessageBundle\Tests\Unit\Consumer;
 
 use RuntimeException;
 use DateTimeImmutable;
@@ -11,9 +11,9 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Clock\MockClock;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ManagerRegistry;
-use F3lix\MessageBundle\Consumer\RetryingExecutor;
+use ACAT\MessageBundle\Consumer\RetryingExecutor;
 use PHPUnit\Framework\Attributes\DataProvider;
-use F3lix\MessageBundle\Tests\Support\RecordingLogger;
+use ACAT\MessageBundle\Tests\Support\RecordingLogger;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 final class RetryingExecutorTest extends TestCase

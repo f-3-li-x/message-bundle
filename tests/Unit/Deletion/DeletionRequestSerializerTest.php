@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Deletion;
+namespace ACAT\MessageBundle\Tests\Unit\Deletion;
 
 use stdClass;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
-use F3lix\MessageBundle\Deletion\DeletionRequest;
+use ACAT\MessageBundle\Deletion\DeletionRequest;
 use PHPUnit\Framework\Attributes\DataProvider;
-use F3lix\MessageBundle\Deletion\DeletionRequestSerializer;
+use ACAT\MessageBundle\Deletion\DeletionRequestSerializer;
 use Symfony\Component\Messenger\Exception\MessageDecodingFailedException;
 
 final class DeletionRequestSerializerTest extends TestCase

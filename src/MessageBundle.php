@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle;
+namespace ACAT\MessageBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

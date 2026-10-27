@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\DependencyInjection;
+namespace ACAT\MessageBundle\Tests\Unit\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
-use F3lix\MessageBundle\Message\BodySerializer;
-use F3lix\MessageBundle\Outbox\OutboxPublisher;
-use F3lix\MessageBundle\Outbox\Command\PublishOutboxCommand;
-use F3lix\MessageBundle\Outbox\Command\RetryFailedOutboxCommand;
-use F3lix\MessageBundle\Connection\RabbitMqTransportFactory;
+use ACAT\MessageBundle\Message\BodySerializer;
+use ACAT\MessageBundle\Outbox\OutboxPublisher;
+use ACAT\MessageBundle\Outbox\Command\PublishOutboxCommand;
+use ACAT\MessageBundle\Outbox\Command\RetryFailedOutboxCommand;
+use ACAT\MessageBundle\Connection\RabbitMqTransportFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use F3lix\MessageBundle\DependencyInjection\MessageExtension;
-use F3lix\MessageBundle\Deletion\DeletionRequestSerializer;
+use ACAT\MessageBundle\DependencyInjection\MessageExtension;
+use ACAT\MessageBundle\Deletion\DeletionRequestSerializer;
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\DoctrineExtension;
-use F3lix\MessageBundle\Logging\SensitiveFieldRedactionProcessor;
+use ACAT\MessageBundle\Logging\SensitiveFieldRedactionProcessor;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 final class MessageExtensionTest extends TestCase
@@ -136,7 +136,7 @@ final class MessageExtensionTest extends TestCase
         /** @var array{orm: array{mappings: array{MessageBundle: array{prefix: string}}}, dbal: array{types: array<string, string>}} $doctrine */
         $doctrine = $container->getExtensionConfig('doctrine')[0];
 
-        self::assertSame('F3lix\MessageBundle\Outbox\Entity', $doctrine['orm']['mappings']['MessageBundle']['prefix']);
+        self::assertSame('ACAT\MessageBundle\Outbox\Entity', $doctrine['orm']['mappings']['MessageBundle']['prefix']);
         self::assertArrayHasKey('message_utc_datetime_ms', $doctrine['dbal']['types']);
     }
 

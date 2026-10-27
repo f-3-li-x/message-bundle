@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Testing;
+namespace ACAT\MessageBundle\Testing;
 
 use Symfony\Component\Uid\Uuid;
-use F3lix\MessageBundle\Outbox\OutboxEntryStore;
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Outbox\OutboxEntryStore;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
  * Test-Double für die Tabelle outbox_entries: hält die Einträge im Speicher.

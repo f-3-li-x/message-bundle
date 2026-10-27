@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Logging;
+namespace ACAT\MessageBundle\Logging;
 
 use AMQPExchange;
 use Monolog\LogRecord;
 use Psr\Clock\ClockInterface;
 use Symfony\Component\Uid\Uuid;
 use Monolog\Handler\AmqpHandler;
-use F3lix\MessageBundle\Message\AmqpProperties;
+use ACAT\MessageBundle\Message\AmqpProperties;
 
 /**
  * Nativer AmqpHandler von Monolog für die Log-Events des Service: Der Routing-Key ist unabhängig vom Channel

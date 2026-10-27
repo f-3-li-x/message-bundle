@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Testing;
+namespace ACAT\MessageBundle\Testing;
 
 use JsonException;
 use PHPUnit\Framework\Assert;

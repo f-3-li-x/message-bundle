@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Outbox;
+namespace ACAT\MessageBundle\Tests\Unit\Outbox;
 
 use Throwable;
 use AMQPException;
@@ -14,15 +14,15 @@ use AMQPExchangeException;
 use AMQPConnectionException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Clock\MockClock;
-use F3lix\MessageBundle\Outbox\OutboxSender;
-use F3lix\MessageBundle\Tests\Support\OutboxEntries;
+use ACAT\MessageBundle\Outbox\OutboxSender;
+use ACAT\MessageBundle\Tests\Support\OutboxEntries;
 use PHPUnit\Framework\Attributes\DataProvider;
-use F3lix\MessageBundle\Outbox\MessengerOutboxSender;
-use F3lix\MessageBundle\Testing\AmqpMessageAssertions;
-use F3lix\MessageBundle\Testing\RecordingMessengerSender;
-use F3lix\MessageBundle\Outbox\MessageRejectedException;
+use ACAT\MessageBundle\Outbox\MessengerOutboxSender;
+use ACAT\MessageBundle\Testing\AmqpMessageAssertions;
+use ACAT\MessageBundle\Testing\RecordingMessengerSender;
+use ACAT\MessageBundle\Outbox\MessageRejectedException;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
-use F3lix\MessageBundle\Outbox\BrokerUnavailableException;
+use ACAT\MessageBundle\Outbox\BrokerUnavailableException;
 use Symfony\Component\Messenger\Exception\TransportException;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 

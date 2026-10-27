@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Message;
+namespace ACAT\MessageBundle\Message;
 
 use LogicException;
 use Symfony\Component\Messenger\Envelope;

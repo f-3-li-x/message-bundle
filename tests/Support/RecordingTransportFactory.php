@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Support;
+namespace ACAT\MessageBundle\Tests\Support;
 
 use Symfony\Component\Messenger\Transport\TransportInterface;
 use Symfony\Component\Messenger\Transport\TransportFactoryInterface;

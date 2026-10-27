@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\DependencyInjection;
+namespace ACAT\MessageBundle\DependencyInjection;
 
-use F3lix\MessageBundle\Deletion\DeletionRequestSerializer;
+use ACAT\MessageBundle\Deletion\DeletionRequestSerializer;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 

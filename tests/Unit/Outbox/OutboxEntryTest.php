@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Outbox;
+namespace ACAT\MessageBundle\Tests\Unit\Outbox;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
-use F3lix\MessageBundle\Outbox\Entity\OutboxStatus;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Outbox\Entity\OutboxStatus;
 
 final class OutboxEntryTest extends TestCase
 {

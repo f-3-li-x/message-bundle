@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Outbox;
+namespace ACAT\MessageBundle\Tests\Unit\Outbox;
 
 use Psr\Log\LogLevel;
 use PHPUnit\Framework\TestCase;
-use F3lix\MessageBundle\Outbox\OutboxPublisher;
-use F3lix\MessageBundle\Tests\Support\OutboxEntries;
-use F3lix\MessageBundle\Testing\ScriptedOutboxSender;
-use F3lix\MessageBundle\Tests\Support\RecordingLogger;
-use F3lix\MessageBundle\Testing\InMemoryOutboxEntryStore;
+use ACAT\MessageBundle\Outbox\OutboxPublisher;
+use ACAT\MessageBundle\Tests\Support\OutboxEntries;
+use ACAT\MessageBundle\Testing\ScriptedOutboxSender;
+use ACAT\MessageBundle\Tests\Support\RecordingLogger;
+use ACAT\MessageBundle\Testing\InMemoryOutboxEntryStore;
 
 final class OutboxPublisherTest extends TestCase
 {

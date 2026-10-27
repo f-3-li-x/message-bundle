@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Outbox\Entity;
+namespace ACAT\MessageBundle\Outbox\Entity;
 
 use DateTimeZone;
 use DateTimeImmutable;
@@ -10,7 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Uid\Uuid;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
-use F3lix\MessageBundle\Persistence\UtcDateTimeMsType;
+use ACAT\MessageBundle\Persistence\UtcDateTimeMsType;
 
 /**
  * Eintrag der Transactional Outbox (Tabelle outbox_entries): ein Event, das in derselben Transaktion wie

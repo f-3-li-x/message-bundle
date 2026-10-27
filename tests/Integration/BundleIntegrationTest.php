@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Integration;
+namespace ACAT\MessageBundle\Tests\Integration;
 
 use stdClass;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\EntityManagerInterface;
-use F3lix\MessageBundle\Outbox\OutboxWriter;
-use F3lix\MessageBundle\Outbox\OutboxEntryStore;
-use F3lix\MessageBundle\Logging\AmqpLogHandler;
-use F3lix\MessageBundle\Consumer\RetryingExecutor;
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
-use F3lix\MessageBundle\Testing\AmqpMessageAssertions;
-use F3lix\MessageBundle\Testing\EventFormatAssertions;
+use ACAT\MessageBundle\Outbox\OutboxWriter;
+use ACAT\MessageBundle\Outbox\OutboxEntryStore;
+use ACAT\MessageBundle\Logging\AmqpLogHandler;
+use ACAT\MessageBundle\Consumer\RetryingExecutor;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Testing\AmqpMessageAssertions;
+use ACAT\MessageBundle\Testing\EventFormatAssertions;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use F3lix\MessageBundle\Deletion\DeletionRequestSerializer;
-use F3lix\MessageBundle\Logging\SensitiveFieldRedactionProcessor;
+use ACAT\MessageBundle\Deletion\DeletionRequestSerializer;
+use ACAT\MessageBundle\Logging\SensitiveFieldRedactionProcessor;
 use Symfony\Component\Messenger\Envelope;
-use F3lix\MessageBundle\Message\RawMessage;
-use F3lix\MessageBundle\Message\BodySerializer;
-use F3lix\MessageBundle\Deletion\DeletionRequest;
+use ACAT\MessageBundle\Message\RawMessage;
+use ACAT\MessageBundle\Message\BodySerializer;
+use ACAT\MessageBundle\Deletion\DeletionRequest;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 

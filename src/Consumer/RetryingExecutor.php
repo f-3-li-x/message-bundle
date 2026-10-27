@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Consumer;
+namespace ACAT\MessageBundle\Consumer;
 
 use Throwable;
 use Psr\Log\LoggerInterface;

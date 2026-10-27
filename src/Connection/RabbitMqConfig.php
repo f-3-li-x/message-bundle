@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Connection;
+namespace ACAT\MessageBundle\Connection;
 
 use SensitiveParameter;
 

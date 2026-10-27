@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Testing;
+namespace ACAT\MessageBundle\Testing;
 
 use Symfony\Component\Uid\Uuid;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\Uid\UuidV7;
 use Symfony\Component\Messenger\Envelope;
-use F3lix\MessageBundle\Message\RawMessage;
-use F3lix\MessageBundle\Message\AmqpProperties;
+use ACAT\MessageBundle\Message\RawMessage;
+use ACAT\MessageBundle\Message\AmqpProperties;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 
 /**

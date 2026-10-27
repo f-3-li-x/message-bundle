@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Outbox\Command;
+namespace ACAT\MessageBundle\Outbox\Command;
 
 use Symfony\Component\Uid\Uuid;
-use F3lix\MessageBundle\Outbox\OutboxEntryStore;
+use ACAT\MessageBundle\Outbox\OutboxEntryStore;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

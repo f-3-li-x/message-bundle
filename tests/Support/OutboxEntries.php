@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Support;
+namespace ACAT\MessageBundle\Tests\Support;
 
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
  * Erzeugt Outbox-Einträge für Tests.

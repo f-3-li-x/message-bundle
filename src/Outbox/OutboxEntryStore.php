@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Outbox;
+namespace ACAT\MessageBundle\Outbox;
 
 use Symfony\Component\Uid\Uuid;
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
  * Zugriff des Outbox-Publishers und der Konsolenkommandos auf die Einträge der Tabelle outbox_entries.

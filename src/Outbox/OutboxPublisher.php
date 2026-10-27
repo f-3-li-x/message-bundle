@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Outbox;
+namespace ACAT\MessageBundle\Outbox;
 
 use Psr\Log\LoggerInterface;
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
  * Outbox-Publisher: stellt die ausstehenden Outbox-Einträge in der Reihenfolge ihres Entstehens an RabbitMQ

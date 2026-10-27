@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Outbox;
+namespace ACAT\MessageBundle\Outbox;
 
 use Symfony\Component\Uid\Uuid;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Types\UuidType;
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
-use F3lix\MessageBundle\Outbox\Entity\OutboxStatus;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Outbox\Entity\OutboxStatus;
 
 /**
  * Zugriff auf die Tabelle outbox_entries über Doctrine. Jede Änderung wird sofort geschrieben, damit ein

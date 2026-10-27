@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Logging;
+namespace ACAT\MessageBundle\Logging;
 
 use AMQPExchange;
 use AMQPException;

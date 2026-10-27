@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Connection;
+namespace ACAT\MessageBundle\Tests\Unit\Connection;
 
 use PHPUnit\Framework\TestCase;
-use F3lix\MessageBundle\Connection\RabbitMqConfig;
-use F3lix\MessageBundle\Connection\RabbitMqTransportFactory;
-use F3lix\MessageBundle\Tests\Support\RecordingTransportFactory;
+use ACAT\MessageBundle\Connection\RabbitMqConfig;
+use ACAT\MessageBundle\Connection\RabbitMqTransportFactory;
+use ACAT\MessageBundle\Tests\Support\RecordingTransportFactory;
 use Symfony\Component\Messenger\Transport\TransportInterface;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 

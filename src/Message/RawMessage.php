@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Message;
+namespace ACAT\MessageBundle\Message;
 
 /**
  * Nachricht für Symfony Messenger, die den Body unverändert trägt, wie er an RabbitMQ geht. Routing-Key und

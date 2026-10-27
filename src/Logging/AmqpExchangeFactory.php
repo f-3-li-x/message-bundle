@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Logging;
+namespace ACAT\MessageBundle\Logging;
 
 use AMQPChannel;
 use AMQPExchange;
 use AMQPException;
 use AMQPConnection;
-use F3lix\MessageBundle\Connection\RabbitMqConfig;
+use ACAT\MessageBundle\Connection\RabbitMqConfig;
 
 /**
  * Baut über die Extension amqp die Verbindung zu RabbitMQ auf und liefert den Exchange des Service, an den die

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Testing;
+namespace ACAT\MessageBundle\Testing;
 
-use F3lix\MessageBundle\Outbox\OutboxSender;
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
-use F3lix\MessageBundle\Outbox\MessageRejectedException;
-use F3lix\MessageBundle\Outbox\BrokerUnavailableException;
+use ACAT\MessageBundle\Outbox\OutboxSender;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Outbox\MessageRejectedException;
+use ACAT\MessageBundle\Outbox\BrokerUnavailableException;
 
 /**
  * Test-Double für die Übergabe an RabbitMQ: stellt Ablehnung einzelner Nachrichten und Nichterreichbarkeit des

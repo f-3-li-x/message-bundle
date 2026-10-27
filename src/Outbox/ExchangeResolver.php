@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Outbox;
+namespace ACAT\MessageBundle\Outbox;
 
 /**
  * Ordnet einem Event den Exchange zu: Die konfigurierten Änderungsereignisse gehen an den zentralen Exchange,

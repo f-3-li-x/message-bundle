@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Deletion;
+namespace ACAT\MessageBundle\Deletion;
 
 use stdClass;
 use JsonException;

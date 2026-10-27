@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Message;
+namespace ACAT\MessageBundle\Tests\Unit\Message;
 
 use stdClass;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
-use F3lix\MessageBundle\Message\RawMessage;
-use F3lix\MessageBundle\Message\BodySerializer;
-use F3lix\MessageBundle\Testing\AmqpMessageAssertions;
+use ACAT\MessageBundle\Message\RawMessage;
+use ACAT\MessageBundle\Message\BodySerializer;
+use ACAT\MessageBundle\Testing\AmqpMessageAssertions;
 
 final class BodySerializerTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Persistence;
+namespace ACAT\MessageBundle\Persistence;
 
 use DateTimeZone;
 use DateTimeImmutable;

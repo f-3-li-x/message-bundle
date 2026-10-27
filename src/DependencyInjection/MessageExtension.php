@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\DependencyInjection;
+namespace ACAT\MessageBundle\DependencyInjection;
 
 use Exception;
 use ReflectionClass;
 use Symfony\Component\Config\FileLocator;
-use F3lix\MessageBundle\Message\BodySerializer;
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
-use F3lix\MessageBundle\Persistence\UtcDateTimeMsType;
-use F3lix\MessageBundle\Connection\RabbitMqTransportFactory;
+use ACAT\MessageBundle\Message\BodySerializer;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Persistence\UtcDateTimeMsType;
+use ACAT\MessageBundle\Connection\RabbitMqTransportFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use F3lix\MessageBundle\Logging\SensitiveFieldRedactionProcessor;
+use ACAT\MessageBundle\Logging\SensitiveFieldRedactionProcessor;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Outbox;
+namespace ACAT\MessageBundle\Outbox;
 
-use F3lix\MessageBundle\Outbox\Entity\OutboxEntry;
+use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
  * Übergibt die Nachricht eines Outbox-Eintrags an RabbitMQ und meldet, ob der Broker sie bestätigt hat.

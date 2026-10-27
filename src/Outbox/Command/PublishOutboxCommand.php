@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Outbox\Command;
+namespace ACAT\MessageBundle\Outbox\Command;
 
 use Psr\Clock\ClockInterface;
-use F3lix\MessageBundle\Outbox\OutboxPublisher;
+use ACAT\MessageBundle\Outbox\OutboxPublisher;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

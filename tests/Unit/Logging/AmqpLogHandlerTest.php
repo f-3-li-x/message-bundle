@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Logging;
+namespace ACAT\MessageBundle\Tests\Unit\Logging;
 
 use Error;
 use AMQPExchange;
@@ -12,11 +12,11 @@ use Monolog\LogRecord;
 use AMQPConnectionException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Clock\MockClock;
-use F3lix\MessageBundle\Logging\AmqpLogHandler;
+use ACAT\MessageBundle\Logging\AmqpLogHandler;
 use PHPUnit\Framework\Attributes\DataProvider;
-use F3lix\MessageBundle\Testing\AmqpMessageAssertions;
+use ACAT\MessageBundle\Testing\AmqpMessageAssertions;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
-use F3lix\MessageBundle\Tests\Support\ScriptedAmqpExchangeFactory;
+use ACAT\MessageBundle\Tests\Support\ScriptedAmqpExchangeFactory;
 
 #[RequiresPhpExtension('amqp')]
 final class AmqpLogHandlerTest extends TestCase

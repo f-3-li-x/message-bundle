@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Support;
+namespace ACAT\MessageBundle\Tests\Support;
 
 use AMQPExchange;
 use AMQPException;
 use LogicException;
-use F3lix\MessageBundle\Logging\AmqpExchangeFactoryInterface;
+use ACAT\MessageBundle\Logging\AmqpExchangeFactoryInterface;
 
 /**
  * Test-Double für den Verbindungsaufbau des AmqpLogHandler: liefert der Reihe nach die hinterlegten Exchanges

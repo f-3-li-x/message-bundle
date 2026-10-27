@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace F3lix\MessageBundle\Tests\Unit\Outbox;
+namespace ACAT\MessageBundle\Tests\Unit\Outbox;
 
 use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Console\Command\Command;
-use F3lix\MessageBundle\Outbox\OutboxPublisher;
-use F3lix\MessageBundle\Tests\Support\OutboxEntries;
-use F3lix\MessageBundle\Testing\ScriptedOutboxSender;
+use ACAT\MessageBundle\Outbox\OutboxPublisher;
+use ACAT\MessageBundle\Tests\Support\OutboxEntries;
+use ACAT\MessageBundle\Testing\ScriptedOutboxSender;
 use Symfony\Component\Console\Tester\CommandTester;
-use F3lix\MessageBundle\Testing\InMemoryOutboxEntryStore;
-use F3lix\MessageBundle\Outbox\Command\PublishOutboxCommand;
-use F3lix\MessageBundle\Outbox\Command\RetryFailedOutboxCommand;
+use ACAT\MessageBundle\Testing\InMemoryOutboxEntryStore;
+use ACAT\MessageBundle\Outbox\Command\PublishOutboxCommand;
+use ACAT\MessageBundle\Outbox\Command\RetryFailedOutboxCommand;
 
 final class OutboxCommandsTest extends TestCase
 {
