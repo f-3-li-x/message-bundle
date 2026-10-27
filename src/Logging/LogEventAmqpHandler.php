@@ -12,19 +12,19 @@ use Monolog\Handler\AmqpHandler;
 use ACAT\MessageBundle\Message\AmqpProperties;
 
 /**
- * Nativer AmqpHandler von Monolog für die Log-Events des Service: Der Routing-Key ist unabhängig vom Channel
- * {Log-Level}.<service> in Kleinbuchstaben, und jede Nachricht trägt die AMQP-Properties aus AmqpProperties.
+ * Native AmqpHandler of Monolog for the log events of the service: the routing key is {log level}.<service> in lower
+ * case regardless of the channel, and every message carries the AMQP properties from AmqpProperties.
  *
- * @internal wird ausschließlich von AmqpLogHandler verwendet
+ * @internal used by AmqpLogHandler only
  */
 final class LogEventAmqpHandler extends AmqpHandler
 {
     /**
-     * Erzeugt den Handler auf einem offenen Exchange.
+     * Creates the handler on an open exchange.
      *
-     * @param AMQPExchange   $exchange Exchange des Service auf einer offenen Verbindung
-     * @param string         $service  Name des Service
-     * @param ClockInterface $clock    Uhr für die AMQP-Property timestamp
+     * @param AMQPExchange   $exchange exchange of the service on an open connection
+     * @param string         $service  name of the service
+     * @param ClockInterface $clock    clock for the AMQP property timestamp
      */
     public function __construct(
         AMQPExchange $exchange,
@@ -35,10 +35,10 @@ final class LogEventAmqpHandler extends AmqpHandler
     }
 
     /**
-     * Veröffentlicht einen Log-Eintrag mit message_id (eine neue UUID v7 je Log-Event), type (der Routing-Key),
-     * app_id, content_type, timestamp und delivery_mode.
+     * Publishes a log record with message_id (a new UUID v7 per log event), type (the routing key), app_id,
+     * content_type, timestamp and delivery_mode.
      *
-     * @param LogRecord $record formatierter Log-Eintrag
+     * @param LogRecord $record formatted log record
      *
      * @return void
      */
@@ -55,11 +55,11 @@ final class LogEventAmqpHandler extends AmqpHandler
     }
 
     /**
-     * Liefert den Routing-Key eines Log-Eintrags.
+     * Returns the routing key of a log record.
      *
-     * @param LogRecord $record Log-Eintrag
+     * @param LogRecord $record log record
      *
-     * @return string der Routing-Key, z. B. error.person-service
+     * @return string the routing key, e.g. error.person-service
      */
     protected function getRoutingKey(LogRecord $record): string
     {

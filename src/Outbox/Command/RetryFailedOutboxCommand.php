@@ -12,9 +12,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Konsolenkommando <namensraum>:retry-failed, standardmäßig outbox:retry-failed: setzt Outbox-Einträge mit Status
- * failed auf pending und den Versuchszähler auf 0, wahlweise für einen einzelnen Eintrag. Den Namensraum legt
- * message.outbox.command_namespace fest.
+ * Console command <namespace>:retry-failed, outbox:retry-failed by default: sets outbox entries with the status
+ * failed back to pending and the attempt counter to 0, optionally for a single entry. The namespace is set by
+ * message.outbox.command_namespace.
  */
 final class RetryFailedOutboxCommand extends Command
 {
@@ -23,10 +23,10 @@ final class RetryFailedOutboxCommand extends Command
     private const string ARGUMENT_ID = 'id';
 
     /**
-     * Erzeugt das Kommando.
+     * Creates the command.
      *
-     * @param OutboxEntryStore $entries Zugriff auf die Tabelle outbox_entries
-     * @param string           $name    Name des Kommandos
+     * @param OutboxEntryStore $entries access to the table outbox_entries
+     * @param string           $name    name of the command
      */
     public function __construct(
         private readonly OutboxEntryStore $entries,
@@ -36,7 +36,7 @@ final class RetryFailedOutboxCommand extends Command
     }
 
     /**
-     * Legt Beschreibung und das optionale Argument id fest.
+     * Sets the description and the optional argument id.
      *
      * @return void
      */
@@ -51,13 +51,13 @@ final class RetryFailedOutboxCommand extends Command
     }
 
     /**
-     * Stößt die fehlgeschlagenen Einträge wieder an, mit dem Argument id nur diesen einen.
+     * Retries the failed entries, with the argument id only this one.
      *
-     * @param InputInterface  $input  Eingabe der Konsole
-     * @param OutputInterface $output Ausgabe der Konsole
+     * @param InputInterface  $input  console input
+     * @param OutputInterface $output console output
      *
-     * @return int Command::SUCCESS, wenn die Einträge angestoßen wurden; Command::FAILURE, wenn id keine UUID ist
-     *             oder es keinen fehlgeschlagenen Eintrag mit dieser id gibt
+     * @return int Command::SUCCESS if the entries were retried; Command::FAILURE if id is not a UUID or there is no
+     *             failed entry with this id
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

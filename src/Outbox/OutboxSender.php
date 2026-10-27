@@ -7,20 +7,20 @@ namespace ACAT\MessageBundle\Outbox;
 use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
- * Übergibt die Nachricht eines Outbox-Eintrags an RabbitMQ und meldet, ob der Broker sie bestätigt hat.
+ * Hands the message of an outbox entry over to RabbitMQ and reports whether the broker confirmed it.
  */
 interface OutboxSender
 {
     /**
-     * Veröffentlicht die Nachricht eines Outbox-Eintrags an dessen Exchange und wartet auf die Bestätigung des
-     * Brokers. Kehrt die Methode ohne Exception zurück, ist die Zustellung bestätigt.
+     * Publishes the message of an outbox entry to its exchange and waits for the broker's confirmation. If the
+     * method returns without an exception, the delivery is confirmed.
      *
-     * @param OutboxEntry $entry zuzustellender Eintrag
+     * @param OutboxEntry $entry entry to deliver
      *
      * @return void
      *
-     * @throws MessageRejectedException   wenn der Broker die Nachricht ablehnt oder nicht bestätigt
-     * @throws BrokerUnavailableException wenn RabbitMQ nicht erreichbar ist
+     * @throws MessageRejectedException   if the broker rejects the message or does not confirm it
+     * @throws BrokerUnavailableException if RabbitMQ is unreachable
      */
     public function send(OutboxEntry $entry): void;
 }

@@ -8,17 +8,17 @@ use Psr\Log\LoggerInterface;
 use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
- * Outbox-Publisher: stellt die ausstehenden Outbox-Einträge in der Reihenfolge ihres Entstehens an RabbitMQ
- * zu und löscht jeden Eintrag unmittelbar nach bestätigter Zustellung.
+ * Outbox publisher: delivers the pending outbox entries to RabbitMQ in the order they were created and deletes every
+ * entry right after its delivery is confirmed.
  */
 final readonly class OutboxPublisher
 {
     /**
-     * Erzeugt den Publisher.
+     * Creates the publisher.
      *
-     * @param OutboxEntryStore $entries Zugriff auf die Tabelle outbox_entries
-     * @param OutboxSender     $sender  Übergabe der Nachrichten an RabbitMQ
-     * @param LoggerInterface  $logger  Logger der Anwendung
+     * @param OutboxEntryStore $entries access to the table outbox_entries
+     * @param OutboxSender     $sender  handover of the messages to RabbitMQ
+     * @param LoggerInterface  $logger  logger of the application
      */
     public function __construct(
         private OutboxEntryStore $entries,
@@ -28,12 +28,11 @@ final readonly class OutboxPublisher
     }
 
     /**
-     * Führt einen Lauf aus: verarbeitet die Einträge sortiert nach created_at, bei Gleichstand nach id. Kann ein
-     * Eintrag nicht zugestellt werden oder steht er auf failed, werden alle späteren Einträge mit derselben
-     * aggregate_id übersprungen; andere aggregate_ids sind davon nicht betroffen. Ist RabbitMQ nicht erreichbar,
-     * bricht der Lauf ab und die Versuchszähler bleiben unverändert.
+     * Runs once: processes the entries ordered by created_at, then by id. If an entry cannot be delivered or has the
+     * status failed, all later entries with the same aggregate_id are skipped; other aggregate_ids are not affected.
+     * If RabbitMQ is unreachable, the run aborts and the attempt counters stay unchanged.
      *
-     * @return PublishResult das Ergebnis des Laufs
+     * @return PublishResult the result of the run
      */
     public function publish(): PublishResult
     {
@@ -82,11 +81,11 @@ final readonly class OutboxPublisher
     }
 
     /**
-     * Bildet den Log-Context zu einem Eintrag; das Payload gehört nicht dazu.
+     * Builds the log context for an entry; the payload is not part of it.
      *
-     * @param OutboxEntry $entry betroffener Eintrag
+     * @param OutboxEntry $entry affected entry
      *
-     * @return array<string, mixed> id, Event-Name, aggregate_id und Versuchszähler des Eintrags
+     * @return array<string, mixed> id, event name, aggregate_id and attempt counter of the entry
      */
     private static function context(OutboxEntry $entry): array
     {
@@ -99,11 +98,11 @@ final readonly class OutboxPublisher
     }
 
     /**
-     * Zählt den Fehlversuch eines Eintrags und speichert ihn. Erreicht der Eintrag damit den Status failed, wird das
-     * mit Level error geloggt.
+     * Counts the failed attempt of an entry and saves it. If the entry thereby gets the status failed, this is logged
+     * at level error.
      *
-     * @param OutboxEntry              $entry     Eintrag, dessen Nachricht abgelehnt oder nicht bestätigt wurde
-     * @param MessageRejectedException $exception Ablehnung durch den Broker
+     * @param OutboxEntry              $entry     entry whose message was rejected or not confirmed
+     * @param MessageRejectedException $exception rejection by the broker
      *
      * @return void
      */

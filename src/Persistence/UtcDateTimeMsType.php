@@ -12,9 +12,9 @@ use Doctrine\DBAL\Types\Exception\InvalidType;
 use Doctrine\DBAL\Types\Exception\InvalidFormat;
 
 /**
- * Custom Type message_utc_datetime_ms: speichert Zeitstempel in UTC mit Millisekunden in Spalten vom Typ
- * DATETIME(3). Die Genauigkeit legt das Mapping über columnDefinition fest (COLUMN_DEFINITION): DBAL kennt bei
- * Zeitstempeln keine Nachkommastellen und liest sie beim Schemavergleich nicht aus der Datenbank.
+ * Custom type message_utc_datetime_ms: stores points in time in UTC with milliseconds in columns of type DATETIME(3).
+ * The mapping sets the precision via columnDefinition (COLUMN_DEFINITION): DBAL knows no fractional seconds for
+ * timestamps and does not read them from the database when comparing schemas.
  */
 final class UtcDateTimeMsType extends Type
 {
@@ -23,16 +23,16 @@ final class UtcDateTimeMsType extends Type
 
     private const string WRITE_FORMAT = 'Y-m-d H:i:s.v';
 
-    /** @var list<string> Formate, in denen die Datenbank den Wert liefert, mit und ohne Nachkommastellen */
+    /** @var list<string> formats in which the database returns the value, with and without fractional seconds */
     private const array READ_FORMATS = ['Y-m-d H:i:s.u', 'Y-m-d H:i:s'];
 
     /**
-     * Liefert die Spaltendeklaration der Datenbankplattform für Zeitstempel.
+     * Returns the column declaration of the database platform for timestamps.
      *
-     * @param array<string, mixed> $column   Spaltendefinition aus dem Mapping
-     * @param AbstractPlatform     $platform Datenbankplattform
+     * @param array<string, mixed> $column   column definition from the mapping
+     * @param AbstractPlatform     $platform database platform
      *
-     * @return string die Spaltendeklaration
+     * @return string the column declaration
      */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
@@ -40,15 +40,15 @@ final class UtcDateTimeMsType extends Type
     }
 
     /**
-     * Bildet aus dem gespeicherten Wert den Zeitstempel in UTC.
+     * Turns the stored value into a point in time in UTC.
      *
-     * @param mixed            $value    Wert aus der Datenbank
-     * @param AbstractPlatform $platform Datenbankplattform
+     * @param mixed            $value    value from the database
+     * @param AbstractPlatform $platform database platform
      *
-     * @return DateTimeImmutable|null der Zeitstempel in UTC mit Millisekunden oder null
+     * @return DateTimeImmutable|null the point in time in UTC with milliseconds, or null
      *
-     * @throws InvalidType   wenn der Wert weder null noch eine Zeichenkette ist
-     * @throws InvalidFormat wenn die Zeichenkette nicht das Format der Spalte hat
+     * @throws InvalidType   if the value is neither null nor a string
+     * @throws InvalidFormat if the string does not have the format of the column
      */
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?DateTimeImmutable
     {
@@ -72,14 +72,14 @@ final class UtcDateTimeMsType extends Type
     }
 
     /**
-     * Bildet aus dem Zeitstempel den Wert für die Datenbank: nach UTC umgerechnet, auf Millisekunden gekürzt.
+     * Turns the point in time into the value for the database: converted to UTC, cut to milliseconds.
      *
-     * @param mixed            $value    Zeitstempel oder null
-     * @param AbstractPlatform $platform Datenbankplattform
+     * @param mixed            $value    point in time or null
+     * @param AbstractPlatform $platform database platform
      *
-     * @return string|null der Zeitstempel im Format YYYY-MM-DD HH:mm:ss.SSS oder null
+     * @return string|null the point in time in the format YYYY-MM-DD HH:mm:ss.SSS, or null
      *
-     * @throws InvalidType wenn der Wert weder null noch ein DateTimeImmutable ist
+     * @throws InvalidType if the value is neither null nor a DateTimeImmutable
      */
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string
     {

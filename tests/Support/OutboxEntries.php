@@ -9,20 +9,20 @@ use Symfony\Component\Uid\Uuid;
 use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
- * Erzeugt Outbox-Einträge für Tests.
+ * Creates outbox entries for tests.
  */
 final class OutboxEntries
 {
     /**
-     * Erzeugt einen ausstehenden Eintrag.
+     * Creates a pending entry.
      *
-     * @param string $id          UUID des Eintrags
-     * @param string $aggregateId Wert des Feldes id aus dem Payload
-     * @param string $createdAt   Erstellungszeitpunkt
-     * @param string $eventType   Event-Name
-     * @param string $exchange    Exchange
+     * @param string $id          UUID of the entry
+     * @param string $aggregateId value of the field id in the payload
+     * @param string $createdAt   point in time of creation
+     * @param string $eventType   event name
+     * @param string $exchange    exchange
      *
-     * @return OutboxEntry der Eintrag
+     * @return OutboxEntry the entry
      */
     public static function pending(
         string $id,
@@ -42,13 +42,13 @@ final class OutboxEntries
     }
 
     /**
-     * Erzeugt einen Eintrag mit Status failed.
+     * Creates an entry with the status failed.
      *
-     * @param string $id          UUID des Eintrags
-     * @param string $aggregateId Wert des Feldes id aus dem Payload
-     * @param string $createdAt   Erstellungszeitpunkt
+     * @param string $id          UUID of the entry
+     * @param string $aggregateId value of the field id in the payload
+     * @param string $createdAt   point in time of creation
      *
-     * @return OutboxEntry der Eintrag
+     * @return OutboxEntry the entry
      */
     public static function failed(
         string $id,

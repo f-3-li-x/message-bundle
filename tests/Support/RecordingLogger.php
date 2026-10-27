@@ -8,7 +8,7 @@ use Stringable;
 use Psr\Log\AbstractLogger;
 
 /**
- * Logger, der die Einträge aufzeichnet.
+ * Logger that records the entries.
  */
 final class RecordingLogger extends AbstractLogger
 {
@@ -16,11 +16,11 @@ final class RecordingLogger extends AbstractLogger
     public array $records = [];
 
     /**
-     * Zeichnet einen Eintrag auf.
+     * Records an entry.
      *
-     * @param mixed                   $level   Level
-     * @param string|Stringable       $message Meldung
-     * @param array<array-key, mixed> $context Context
+     * @param mixed                   $level   level
+     * @param string|Stringable       $message message
+     * @param array<array-key, mixed> $context context
      *
      * @return void
      */
@@ -30,9 +30,9 @@ final class RecordingLogger extends AbstractLogger
     }
 
     /**
-     * Liefert die Level der aufgezeichneten Einträge.
+     * Returns the levels of the recorded entries.
      *
-     * @return list<mixed> die Level in der Reihenfolge der Einträge
+     * @return list<mixed> the levels in the order of the entries
      */
     public function levels(): array
     {

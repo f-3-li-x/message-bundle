@@ -10,19 +10,18 @@ use ACAT\MessageBundle\Outbox\MessageRejectedException;
 use ACAT\MessageBundle\Outbox\BrokerUnavailableException;
 
 /**
- * Test-Double für die Übergabe an RabbitMQ: stellt Ablehnung einzelner Nachrichten und Nichterreichbarkeit des
- * Brokers nach und reicht bestätigte Nachrichten wahlweise an einen echten Sender weiter, z. B. an
- * MessengerOutboxSender mit In-Memory-Transports.
+ * Test double for the handover to RabbitMQ: simulates rejected messages and an unreachable broker, and optionally
+ * passes confirmed messages on to a real sender, e.g. MessengerOutboxSender with in-memory transports.
  */
 final class ScriptedOutboxSender implements OutboxSender
 {
-    /** @var array<string, true> UUIDs der Einträge, deren Nachricht abgelehnt wird */
+    /** @var array<string, true> UUIDs of the entries whose message is rejected */
     private array $rejectedIds = [];
 
-    /** @var list<string> UUIDs der Einträge in der Reihenfolge der Zustellversuche */
+    /** @var list<string> UUIDs of the entries in the order of the delivery attempts */
     private array $attemptedIds = [];
 
-    /** @var list<OutboxEntry> bestätigte Einträge in der Reihenfolge der Zustellung */
+    /** @var list<OutboxEntry> confirmed entries in the order of delivery */
     private array $confirmed = [];
 
     private bool $rejectEverything = false;
@@ -30,18 +29,18 @@ final class ScriptedOutboxSender implements OutboxSender
     private ?int $unavailableAfterAttempts = null;
 
     /**
-     * Erzeugt das Test-Double.
+     * Creates the test double.
      *
-     * @param OutboxSender|null $inner Sender, an den bestätigte Nachrichten weitergehen; null ohne Weitergabe
+     * @param OutboxSender|null $inner sender that receives confirmed messages; null for none
      */
     public function __construct(private readonly ?OutboxSender $inner = null)
     {
     }
 
     /**
-     * Lässt den Broker die Nachrichten dieser Einträge ablehnen.
+     * Makes the broker reject the messages of these entries.
      *
-     * @param string ...$ids UUIDs der Einträge im Format RFC 4122
+     * @param string ...$ids UUIDs of the entries in RFC 4122 format
      *
      * @return void
      */
@@ -53,7 +52,7 @@ final class ScriptedOutboxSender implements OutboxSender
     }
 
     /**
-     * Lässt den Broker jede Nachricht ablehnen.
+     * Makes the broker reject every message.
      *
      * @return void
      */
@@ -63,7 +62,7 @@ final class ScriptedOutboxSender implements OutboxSender
     }
 
     /**
-     * Hebt alle Ablehnungen auf.
+     * Lifts all rejections.
      *
      * @return void
      */
@@ -74,9 +73,9 @@ final class ScriptedOutboxSender implements OutboxSender
     }
 
     /**
-     * Macht den Broker nach einer Zahl weiterer Zustellversuche unerreichbar.
+     * Makes the broker unreachable after a number of further delivery attempts.
      *
-     * @param int $afterAttempts Zahl der Zustellversuche, die noch den Broker erreichen
+     * @param int $afterAttempts number of delivery attempts that still reach the broker
      *
      * @return void
      */
@@ -86,7 +85,7 @@ final class ScriptedOutboxSender implements OutboxSender
     }
 
     /**
-     * Macht den Broker wieder erreichbar.
+     * Makes the broker reachable again.
      *
      * @return void
      */
@@ -96,14 +95,14 @@ final class ScriptedOutboxSender implements OutboxSender
     }
 
     /**
-     * Stellt die Nachricht nach dem eingestellten Verhalten zu.
+     * Delivers the message according to the configured behaviour.
      *
-     * @param OutboxEntry $entry zuzustellender Eintrag
+     * @param OutboxEntry $entry entry to deliver
      *
      * @return void
      *
-     * @throws MessageRejectedException   wenn die Nachricht abgelehnt werden soll
-     * @throws BrokerUnavailableException wenn der Broker unerreichbar sein soll
+     * @throws MessageRejectedException   if the message is to be rejected
+     * @throws BrokerUnavailableException if the broker is to be unreachable
      */
     public function send(OutboxEntry $entry): void
     {
@@ -124,9 +123,9 @@ final class ScriptedOutboxSender implements OutboxSender
     }
 
     /**
-     * Liefert die UUIDs der Einträge in der Reihenfolge der Zustellversuche.
+     * Returns the UUIDs of the entries in the order of the delivery attempts.
      *
-     * @return list<string> UUIDs im Format RFC 4122
+     * @return list<string> UUIDs in RFC 4122 format
      */
     public function attemptedIds(): array
     {
@@ -134,9 +133,9 @@ final class ScriptedOutboxSender implements OutboxSender
     }
 
     /**
-     * Liefert die bestätigten Einträge in der Reihenfolge der Zustellung.
+     * Returns the confirmed entries in the order of delivery.
      *
-     * @return list<OutboxEntry> die bestätigten Einträge
+     * @return list<OutboxEntry> the confirmed entries
      */
     public function confirmed(): array
     {

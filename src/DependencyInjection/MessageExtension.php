@@ -18,9 +18,9 @@ use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 
 /**
- * Lädt die Services des Bundles und belegt die Konfiguration von Symfony Messenger und Doctrine vor: Standardbus
- * ohne reject_redelivered_message_middleware, Transports zum Veröffentlichen und Konsumieren, Mapping der
- * Outbox-Tabelle.
+ * Loads the services of the bundle and prepends the configuration of Symfony Messenger and Doctrine: default bus
+ * without reject_redelivered_message_middleware, transports for publishing and consuming, mapping of the outbox
+ * table.
  *
  * @phpstan-type BundleConfig array{
  *     service: string,
@@ -43,18 +43,18 @@ final class MessageExtension extends Extension implements PrependExtensionInterf
     public const string PARAMETER_COMMAND_NAMESPACE = 'message.outbox.command_namespace';
     public const string PARAMETER_LOGGING_ENABLED = 'message.logging.enabled';
 
-    /** Umgebung, in der alle Transports In-Memory laufen und der AmqpLogHandler abgeschaltet ist */
+    /** Environment in which all transports run in memory and the AmqpLogHandler is disabled */
     private const string TEST_ENVIRONMENT = 'test';
 
     private const string IN_MEMORY_DSN = 'in-memory://';
 
-    /** Zeit in Sekunden, die der Outbox-Publisher je Nachricht auf die Bestätigung des Brokers wartet */
+    /** Seconds the outbox publisher waits per message for the broker's confirmation */
     private const int CONFIRM_TIMEOUT = 10;
 
     /**
-     * Standardbus von Symfony 8 ohne reject_redelivered_message_middleware: Diese würde jede von RabbitMQ erneut
-     * zugestellte Nachricht ablehnen, bevor der Event-Consumer läuft; wegen max_retries: 0 landete eine Nachricht,
-     * deren Worker vor dem ack abgebrochen ist, ohne Verarbeitung in der Dead-Letter-Queue.
+     * Default bus of Symfony 8 without reject_redelivered_message_middleware: it would reject every message that
+     * RabbitMQ redelivers before the event consumer runs; with max_retries: 0, a message whose worker stopped before
+     * the ack would end up in the dead-letter queue without being processed.
      *
      * @var list<string>
      */
@@ -69,9 +69,9 @@ final class MessageExtension extends Extension implements PrependExtensionInterf
     ];
 
     /**
-     * Belegt die Konfiguration von framework.messenger und doctrine vor.
+     * Prepends the configuration of framework.messenger and doctrine.
      *
-     * @param ContainerBuilder $container Container der Anwendung
+     * @param ContainerBuilder $container container of the application
      *
      * @return void
      */
@@ -88,14 +88,14 @@ final class MessageExtension extends Extension implements PrependExtensionInterf
     }
 
     /**
-     * Lädt die Services des Bundles.
+     * Loads the services of the bundle.
      *
-     * @param array<array-key, mixed> $configs   Konfigurationen unter dem Schlüssel message
-     * @param ContainerBuilder        $container Container der Anwendung
+     * @param array<array-key, mixed> $configs   configurations under the key message
+     * @param ContainerBuilder        $container container of the application
      *
      * @return void
      *
-     * @throws Exception wenn sich eine Datei mit Service-Definitionen nicht laden lässt
+     * @throws Exception if a file with service definitions cannot be loaded
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -123,13 +123,13 @@ final class MessageExtension extends Extension implements PrependExtensionInterf
     }
 
     /**
-     * Liefert die Transports zum Veröffentlichen: einen für den Exchange des Service und, sofern konfiguriert, einen
-     * für den zentralen Exchange. Der Name eines Transports ist der Name seines Exchange in snake_case.
+     * Returns the transports for publishing: one for the service's exchange and, if configured, one for the central
+     * exchange. The name of a transport is the name of its exchange in snake_case.
      *
-     * @param string      $service         Name des Service, zugleich Name seines Exchange
-     * @param string|null $centralExchange zentraler Exchange oder null
+     * @param string      $service         name of the service, also the name of its exchange
+     * @param string|null $centralExchange central exchange or null
      *
-     * @return array<string, string> Exchange je Transport, z. B. ['person_service' => 'person-service']
+     * @return array<string, string> exchange per transport, e.g. ['person_service' => 'person-service']
      */
     public static function publishTransports(string $service, ?string $centralExchange): array
     {
@@ -144,11 +144,11 @@ final class MessageExtension extends Extension implements PrependExtensionInterf
     }
 
     /**
-     * Verarbeitet die Konfigurationen unter dem Schlüssel message.
+     * Processes the configurations under the key message.
      *
-     * @param array<array-key, mixed> $configs Konfigurationen der Anwendung
+     * @param array<array-key, mixed> $configs configurations of the application
      *
-     * @return BundleConfig die verarbeitete Konfiguration
+     * @return BundleConfig the processed configuration
      */
     private function bundleConfig(array $configs): array
     {
@@ -159,12 +159,12 @@ final class MessageExtension extends Extension implements PrependExtensionInterf
     }
 
     /**
-     * Bildet die Konfiguration von framework.messenger.
+     * Builds the configuration of framework.messenger.
      *
-     * @param BundleConfig $config verarbeitete Konfiguration des Bundles
-     * @param bool         $test   true in der Umgebung test; dann laufen alle Transports In-Memory
+     * @param BundleConfig $config processed configuration of the bundle
+     * @param bool         $test   true in the test environment; all transports then run in memory
      *
-     * @return array<string, mixed> die Konfiguration unter framework.messenger
+     * @return array<string, mixed> the configuration under framework.messenger
      */
     private static function messengerConfig(array $config, bool $test): array
     {
@@ -212,9 +212,9 @@ final class MessageExtension extends Extension implements PrependExtensionInterf
     }
 
     /**
-     * Bildet die Konfiguration von doctrine: Custom Type für Zeitstempel und Mapping von OutboxEntry.
+     * Builds the configuration of doctrine: custom type for timestamps and mapping of OutboxEntry.
      *
-     * @return array<string, mixed> die Konfiguration unter doctrine
+     * @return array<string, mixed> the configuration under doctrine
      */
     private static function doctrineConfig(): array
     {
@@ -237,11 +237,11 @@ final class MessageExtension extends Extension implements PrependExtensionInterf
     }
 
     /**
-     * Liefert die Umgebung des Kernels.
+     * Returns the environment of the kernel.
      *
-     * @param ContainerBuilder $container Container der Anwendung
+     * @param ContainerBuilder $container container of the application
      *
-     * @return string die Umgebung, z. B. prod oder test; prod, wenn sie nicht bekannt ist
+     * @return string the environment, e.g. prod or test; prod if it is unknown
      */
     private static function environment(ContainerBuilder $container): string
     {

@@ -21,17 +21,17 @@ use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\Transport\Sender\SenderInterface;
 
 /**
- * Veröffentlicht Outbox-Einträge über die Transports von Symfony Messenger an RabbitMQ. Die Transports arbeiten
- * mit Publisher Confirms; kehrt der Transport ohne Fehler zurück, hat der Broker die Nachricht bestätigt.
+ * Publishes outbox entries to RabbitMQ via the transports of Symfony Messenger. The transports use publisher
+ * confirms; if the transport returns without an error, the broker has confirmed the message.
  */
 final readonly class MessengerOutboxSender implements OutboxSender
 {
     /**
-     * Erzeugt den Sender.
+     * Creates the sender.
      *
-     * @param array<string, SenderInterface> $senders Transport je Exchange, Schlüssel ist der Name des Exchange
-     * @param string                         $appId   Name des Service, AMQP-Property app_id
-     * @param ClockInterface                 $clock   Uhr für die AMQP-Property timestamp
+     * @param array<string, SenderInterface> $senders transport per exchange, keyed by the name of the exchange
+     * @param string                         $appId   name of the service, AMQP property app_id
+     * @param ClockInterface                 $clock   clock for the AMQP property timestamp
      */
     public function __construct(
         private array $senders,
@@ -41,16 +41,16 @@ final readonly class MessengerOutboxSender implements OutboxSender
     }
 
     /**
-     * Veröffentlicht die Nachricht eines Outbox-Eintrags an dessen Exchange. Der Body ist das Payload; Routing-Key
-     * und AMQP-Properties bildet AmqpProperties.
+     * Publishes the message of an outbox entry to its exchange. The body is the payload; routing key and AMQP
+     * properties come from AmqpProperties.
      *
-     * @param OutboxEntry $entry zuzustellender Eintrag
+     * @param OutboxEntry $entry entry to deliver
      *
      * @return void
      *
-     * @throws MessageRejectedException   wenn der Broker die Nachricht ablehnt oder nicht bestätigt
-     * @throws BrokerUnavailableException wenn RabbitMQ nicht erreichbar ist
-     * @throws LogicException             wenn für den Exchange des Eintrags kein Transport eingerichtet ist
+     * @throws MessageRejectedException   if the broker rejects the message or does not confirm it
+     * @throws BrokerUnavailableException if RabbitMQ is unreachable
+     * @throws LogicException             if no transport is set up for the exchange of the entry
      */
     public function send(OutboxEntry $entry): void
     {
@@ -74,15 +74,15 @@ final readonly class MessengerOutboxSender implements OutboxSender
     }
 
     /**
-     * Unterscheidet einen nicht erreichbaren Broker von einer abgelehnten oder nicht bestätigten Nachricht. Nicht
-     * erreichbar ist der Broker, wenn der Verbindungsaufbau scheitert oder die Verbindung abbricht: Die Extension
-     * amqp meldet das als AMQPConnectionException oder als AMQPException ohne nähere Art. Als Ablehnung gelten
-     * Fehler auf dem Kanal und am Exchange, die ausbleibende Bestätigung (AMQPQueueException beim Warten auf die
-     * Bestätigung) und die negative Bestätigung, die der Transport ohne AMQP-Fehler als TransportException meldet.
+     * Tells an unreachable broker apart from a rejected or unconfirmed message. The broker is unreachable when
+     * connecting fails or the connection breaks: the amqp extension reports this as AMQPConnectionException or as
+     * AMQPException without a more specific type. Rejections are failures on the channel and at the exchange, the
+     * missing confirmation (AMQPQueueException while waiting for the confirmation) and the negative acknowledgement,
+     * which the transport reports as TransportException without an AMQP failure.
      *
-     * @param TransportException $exception Fehler des Transports
+     * @param TransportException $exception failure of the transport
      *
-     * @return bool true, wenn RabbitMQ nicht erreichbar ist
+     * @return bool true if RabbitMQ is unreachable
      */
     private static function isBrokerUnavailable(TransportException $exception): bool
     {
@@ -114,11 +114,11 @@ final readonly class MessengerOutboxSender implements OutboxSender
     }
 
     /**
-     * Liefert den Fehler und alle Fehler, die ihn ausgelöst haben.
+     * Returns the failure and all failures that caused it.
      *
-     * @param Throwable $exception Fehler des Transports
+     * @param Throwable $exception failure of the transport
      *
-     * @return list<Throwable> der Fehler und seine Ursachen, vom äußersten zum innersten
+     * @return list<Throwable> the failure and its causes, from the outermost to the innermost
      */
     private static function causes(Throwable $exception): array
     {

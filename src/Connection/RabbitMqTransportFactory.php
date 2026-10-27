@@ -10,9 +10,8 @@ use Symfony\Component\Messenger\Transport\TransportFactoryInterface;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 /**
- * Erzeugt den AMQP-Transport für den DSN rabbitmq-env://: Die Verbindungsdaten kommen aus den Variablen
- * RABBITMQ_* statt aus dem DSN, die Optionen des Transports (Exchange, Queues, auto_setup, ...) aus seiner
- * Konfiguration.
+ * Creates the AMQP transport for the DSN rabbitmq-env://: the connection data come from the RABBITMQ_* variables
+ * instead of the DSN, the options of the transport (exchange, queues, auto_setup, ...) from its configuration.
  *
  * @implements TransportFactoryInterface<TransportInterface>
  */
@@ -20,14 +19,14 @@ final readonly class RabbitMqTransportFactory implements TransportFactoryInterfa
 {
     public const string DSN = 'rabbitmq-env://';
 
-    /** Zeitlimit für den Verbindungsaufbau der Transports in Sekunden */
+    /** Timeout for connecting the transports in seconds */
     private const float CONNECT_TIMEOUT = 5.0;
 
     /**
-     * Erzeugt die Factory.
+     * Creates the factory.
      *
-     * @param RabbitMqConfig                                $config Verbindungsdaten aus RABBITMQ_*
-     * @param TransportFactoryInterface<TransportInterface> $amqp   Factory des AMQP-Transports von Symfony Messenger
+     * @param RabbitMqConfig                                $config connection data from RABBITMQ_*
+     * @param TransportFactoryInterface<TransportInterface> $amqp   factory of the AMQP transport of Symfony Messenger
      */
     public function __construct(
         private RabbitMqConfig $config,
@@ -36,15 +35,15 @@ final readonly class RabbitMqTransportFactory implements TransportFactoryInterfa
     }
 
     /**
-     * Erzeugt den AMQP-Transport mit den Verbindungsdaten aus RABBITMQ_*. Statt des DSN wird nur das Schema
-     * weitergegeben, amqps:// bei verschlüsselter Verbindung, sonst amqp://; eine Option des Transports hat
-     * Vorrang vor den gleichnamigen Verbindungsdaten.
+     * Creates the AMQP transport with the connection data from RABBITMQ_*. Instead of the DSN, only the scheme is
+     * passed on, amqps:// for an encrypted connection, otherwise amqp://; an option of the transport takes precedence
+     * over the connection data of the same name.
      *
      * @param string               $dsn        rabbitmq-env://
-     * @param array<string, mixed> $options    Optionen des Transports
-     * @param SerializerInterface  $serializer Serializer des Transports
+     * @param array<string, mixed> $options    options of the transport
+     * @param SerializerInterface  $serializer serializer of the transport
      *
-     * @return TransportInterface der AMQP-Transport
+     * @return TransportInterface the AMQP transport
      */
     public function createTransport(
         #[SensitiveParameter]
@@ -60,12 +59,12 @@ final readonly class RabbitMqTransportFactory implements TransportFactoryInterfa
     }
 
     /**
-     * Prüft, ob der DSN zu dieser Factory gehört.
+     * Checks whether the DSN belongs to this factory.
      *
-     * @param string               $dsn     DSN des Transports
-     * @param array<string, mixed> $options Optionen des Transports
+     * @param string               $dsn     DSN of the transport
+     * @param array<string, mixed> $options options of the transport
      *
-     * @return bool true bei rabbitmq-env://
+     * @return bool true for rabbitmq-env://
      */
     public function supports(
         #[SensitiveParameter]

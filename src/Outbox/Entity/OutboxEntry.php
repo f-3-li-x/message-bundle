@@ -13,9 +13,9 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 use ACAT\MessageBundle\Persistence\UtcDateTimeMsType;
 
 /**
- * Eintrag der Transactional Outbox (Tabelle outbox_entries): ein Event, das in derselben Transaktion wie
- * die auslösende Zustandsänderung geschrieben wurde und noch an RabbitMQ zuzustellen ist. Das Payload liegt als
- * Text in einer Spalte vom Typ LONGTEXT, damit Feldreihenfolge und leere Objekte erhalten bleiben.
+ * Entry of the transactional outbox (table outbox_entries): an event that was written in the same transaction as
+ * the state change that caused it and still has to be delivered to RabbitMQ. The payload is stored as text in a
+ * LONGTEXT column so that field order and empty objects are preserved.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'outbox_entries')]
@@ -54,15 +54,14 @@ class OutboxEntry
     private DateTimeImmutable $createdAt;
 
     /**
-     * Legt einen ausstehenden Eintrag an.
+     * Creates a pending entry.
      *
-     * @param Uuid              $id          UUID v7 des Eintrags, zugleich message_id der Nachricht
-     * @param string            $aggregateId Wert des Feldes id aus dem Payload
-     * @param string            $eventType   Event-Name, zugleich Routing-Key der Nachricht
-     * @param string            $exchange    Exchange, an den das Event veröffentlicht wird
-     * @param string            $payload     Payload des Events als JSON
-     * @param DateTimeImmutable $createdAt   Zeitpunkt, zu dem der Eintrag angelegt wurde; wird auf UTC mit
-     *                                       Millisekunden gebracht
+     * @param Uuid              $id          UUID v7 of the entry, also the message_id of the message
+     * @param string            $aggregateId value of the field id in the payload
+     * @param string            $eventType   event name, also the routing key of the message
+     * @param string            $exchange    exchange the event is published to
+     * @param string            $payload     payload of the event as JSON
+     * @param DateTimeImmutable $createdAt   point in time the entry was created; converted to UTC with milliseconds
      */
     public function __construct(
         Uuid $id,
@@ -85,8 +84,8 @@ class OutboxEntry
     }
 
     /**
-     * Zählt einen Zustellversuch, den der Broker abgelehnt oder nicht bestätigt hat. Mit dem zehnten gezählten
-     * Fehlversuch erhält der Eintrag den Status failed.
+     * Counts a delivery attempt that the broker rejected or did not confirm. With the tenth counted failed attempt,
+     * the entry gets the status failed.
      *
      * @return void
      */
@@ -100,7 +99,7 @@ class OutboxEntry
     }
 
     /**
-     * Stößt einen fehlgeschlagenen Eintrag wieder an: Status pending, Versuchszähler 0.
+     * Retries a failed entry: status pending, attempt counter 0.
      *
      * @return void
      */
@@ -111,9 +110,9 @@ class OutboxEntry
     }
 
     /**
-     * Prüft, ob der Eintrag den Status failed hat und nicht weiter zugestellt wird.
+     * Checks whether the entry has the status failed and is no longer delivered.
      *
-     * @return bool true beim Status failed
+     * @return bool true for the status failed
      */
     public function isFailed(): bool
     {
@@ -121,9 +120,9 @@ class OutboxEntry
     }
 
     /**
-     * Liefert die UUID des Eintrags.
+     * Returns the UUID of the entry.
      *
-     * @return Uuid die UUID v7, bei erneuter Zustellung unverändert
+     * @return Uuid the UUID v7, unchanged on redelivery
      */
     public function getId(): Uuid
     {
@@ -131,9 +130,9 @@ class OutboxEntry
     }
 
     /**
-     * Liefert den Wert des Feldes id aus dem Payload.
+     * Returns the value of the field id in the payload.
      *
-     * @return string die id, an der die Reihenfolge der Zustellung hängt
+     * @return string the id that determines the order of delivery
      */
     public function getAggregateId(): string
     {
@@ -141,9 +140,9 @@ class OutboxEntry
     }
 
     /**
-     * Liefert den Event-Namen.
+     * Returns the event name.
      *
-     * @return string der Event-Name, zugleich Routing-Key, z. B. person.updated
+     * @return string the event name, also the routing key, e.g. person.updated
      */
     public function getEventType(): string
     {
@@ -151,9 +150,9 @@ class OutboxEntry
     }
 
     /**
-     * Liefert den Exchange, an den das Event veröffentlicht wird.
+     * Returns the exchange the event is published to.
      *
-     * @return string der Name des Exchange
+     * @return string the name of the exchange
      */
     public function getExchange(): string
     {
@@ -161,9 +160,9 @@ class OutboxEntry
     }
 
     /**
-     * Liefert das Payload des Events.
+     * Returns the payload of the event.
      *
-     * @return string das Payload als JSON, wie es als Body an RabbitMQ geht
+     * @return string the payload as JSON, as it is sent to RabbitMQ as the body
      */
     public function getPayload(): string
     {
@@ -171,9 +170,9 @@ class OutboxEntry
     }
 
     /**
-     * Liefert den Status.
+     * Returns the status.
      *
-     * @return OutboxStatus pending oder failed
+     * @return OutboxStatus pending or failed
      */
     public function getStatus(): OutboxStatus
     {
@@ -181,9 +180,9 @@ class OutboxEntry
     }
 
     /**
-     * Liefert den Versuchszähler.
+     * Returns the attempt counter.
      *
-     * @return int Anzahl der vom Broker abgelehnten oder nicht bestätigten Zustellversuche
+     * @return int number of delivery attempts the broker rejected or did not confirm
      */
     public function getAttempts(): int
     {
@@ -191,9 +190,9 @@ class OutboxEntry
     }
 
     /**
-     * Liefert den Zeitpunkt, zu dem der Eintrag angelegt wurde.
+     * Returns the point in time the entry was created.
      *
-     * @return DateTimeImmutable Zeitpunkt in UTC mit Millisekunden
+     * @return DateTimeImmutable point in time in UTC with milliseconds
      */
     public function getCreatedAt(): DateTimeImmutable
     {

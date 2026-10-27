@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace ACAT\MessageBundle\Deletion;
 
 /**
- * Löschauftrag (deletion.requested) des Löschdienstes mit dem Payload id und ticketId. Welcher Auftrag
- * gemeint ist, ergibt sich aus der Queue bzw. dem Transport, über den er eingeht; der Event-Consumer wählt ihn
- * über #[AsMessageHandler(fromTransport: ...)].
+ * Deletion request (deletion.requested) of the deletion service with the payload id and ticketId. Which request
+ * is meant follows from the queue or transport it arrives through; the event consumer selects it with
+ * #[AsMessageHandler(fromTransport: ...)].
  */
 final readonly class DeletionRequest
 {
     /**
-     * Erzeugt den Löschauftrag.
+     * Creates the deletion request.
      *
-     * @param string $id       id aus dem Payload, wie sie übermittelt wurde; muss keine gültige UUID v7 sein
-     * @param string $ticketId vom Löschdienst vergebene ticketId, wird für die Rückmeldung übernommen
+     * @param string $id       id from the payload as it was sent; need not be a valid UUID v7
+     * @param string $ticketId ticketId assigned by the deletion service, taken over for the feedback
      */
     public function __construct(
         public string $id,

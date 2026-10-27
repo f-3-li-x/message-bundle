@@ -16,8 +16,8 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 /*
- * Verbindung, Nachrichtenformat, Retry beim Konsum, Löschaufträge und Logging. Die Verbindungsdaten kommen aus
- * den Variablen RABBITMQ_*; RABBITMQ_HEARTBEAT und RABBITMQ_RETRY haben Standardwerte.
+ * Connection, message format, retries when consuming, deletion requests and logging. The connection data come
+ * from the RABBITMQ_* variables; RABBITMQ_HEARTBEAT and RABBITMQ_RETRY have defaults.
  */
 return static function (ContainerConfigurator $configurator): void {
     $configurator->parameters()

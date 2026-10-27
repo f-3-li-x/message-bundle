@@ -11,24 +11,24 @@ use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 use ACAT\MessageBundle\Outbox\Entity\OutboxStatus;
 
 /**
- * Zugriff auf die Tabelle outbox_entries über Doctrine. Jede Änderung wird sofort geschrieben, damit ein
- * zugestellter Eintrag unmittelbar nach bestätigter Zustellung gelöscht ist.
+ * Access to the table outbox_entries via Doctrine. Every change is written immediately so that a delivered entry is
+ * deleted right after its delivery is confirmed.
  */
 final readonly class DoctrineOutboxEntryStore implements OutboxEntryStore
 {
     /**
-     * Erzeugt den Zugriff.
+     * Creates the store.
      *
-     * @param EntityManagerInterface $entityManager EntityManager von Doctrine
+     * @param EntityManagerInterface $entityManager EntityManager of Doctrine
      */
     public function __construct(private EntityManagerInterface $entityManager)
     {
     }
 
     /**
-     * Liefert alle Einträge, ausstehende wie fehlgeschlagene, in der Reihenfolge der Zustellung.
+     * Returns all entries, pending and failed, in the order of delivery.
      *
-     * @return list<OutboxEntry> die Einträge, sortiert nach created_at, bei Gleichstand nach id
+     * @return list<OutboxEntry> the entries, ordered by created_at, then by id
      */
     public function findAllOrdered(): array
     {
@@ -38,9 +38,9 @@ final readonly class DoctrineOutboxEntryStore implements OutboxEntryStore
     }
 
     /**
-     * Speichert Versuchszähler und Status eines Eintrags sofort.
+     * Saves the attempt counter and status of an entry immediately.
      *
-     * @param OutboxEntry $entry geänderter Eintrag
+     * @param OutboxEntry $entry changed entry
      *
      * @return void
      */
@@ -51,9 +51,9 @@ final readonly class DoctrineOutboxEntryStore implements OutboxEntryStore
     }
 
     /**
-     * Löscht einen Eintrag sofort, unmittelbar nach bestätigter Zustellung.
+     * Deletes an entry immediately, right after its delivery is confirmed.
      *
-     * @param OutboxEntry $entry zugestellter Eintrag
+     * @param OutboxEntry $entry delivered entry
      *
      * @return void
      */
@@ -64,11 +64,11 @@ final readonly class DoctrineOutboxEntryStore implements OutboxEntryStore
     }
 
     /**
-     * Setzt fehlgeschlagene Einträge in einem UPDATE auf pending und den Versuchszähler auf 0.
+     * Sets failed entries back to pending and the attempt counter to 0 in one UPDATE.
      *
-     * @param Uuid|null $id UUID eines einzelnen Eintrags oder null für alle fehlgeschlagenen Einträge
+     * @param Uuid|null $id UUID of a single entry, or null for all failed entries
      *
-     * @return int Anzahl der wieder angestoßenen Einträge
+     * @return int number of entries retried
      */
     public function retryFailed(?Uuid $id = null): int
     {

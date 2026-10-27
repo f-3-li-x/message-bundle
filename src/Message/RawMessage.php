@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace ACAT\MessageBundle\Message;
 
 /**
- * Nachricht für Symfony Messenger, die den Body unverändert trägt, wie er an RabbitMQ geht. Routing-Key und
- * AMQP-Properties trägt der AmqpStamp des Umschlags.
+ * Message for Symfony Messenger that carries the body unchanged, as it is sent to RabbitMQ. The AmqpStamp of the
+ * envelope carries routing key and AMQP properties.
  */
 final readonly class RawMessage
 {
     /**
-     * Erzeugt die Nachricht.
+     * Creates the message.
      *
-     * @param string $body Payload des Events als JSON
+     * @param string $body payload of the event as JSON
      */
     public function __construct(public string $body)
     {

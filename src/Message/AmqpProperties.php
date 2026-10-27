@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ACAT\MessageBundle\Message;
 
 /**
- * AMQP-Properties des Nachrichtenformats, für Domain Events wie für Log-Events.
+ * AMQP properties of the message format, for domain events as well as for log events.
  */
 final class AmqpProperties
 {
@@ -13,12 +13,12 @@ final class AmqpProperties
     public const int DELIVERY_MODE_PERSISTENT = 2;
 
     /**
-     * Bildet die AMQP-Properties einer Nachricht.
+     * Builds the AMQP properties of a message.
      *
-     * @param string $messageId UUID v7: bei Events die des Outbox-Eintrags, bei Log-Events eine neue je Log-Event
-     * @param string $type      Routing-Key, z. B. person.updated oder error.person-service
-     * @param string $appId     Name des Service
-     * @param int    $timestamp Zeitpunkt der Veröffentlichung als Unix-Zeit in Sekunden
+     * @param string $messageId UUID v7: for events that of the outbox entry, for log events a new one per log event
+     * @param string $type      routing key, e.g. person.updated or error.person-service
+     * @param string $appId     name of the service
+     * @param int    $timestamp point in time of publishing as Unix time in seconds
      *
      * @return array{
      *     message_id: string,
@@ -27,7 +27,7 @@ final class AmqpProperties
      *     content_type: string,
      *     timestamp: int,
      *     delivery_mode: int,
-     * } die AMQP-Properties
+     * } the AMQP properties
      */
     public static function of(string $messageId, string $type, string $appId, int $timestamp): array
     {

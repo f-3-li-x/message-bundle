@@ -7,21 +7,21 @@ namespace ACAT\MessageBundle\Connection;
 use SensitiveParameter;
 
 /**
- * Verbindungsdaten von RabbitMQ aus den Variablen RABBITMQ_*, in der Form, die die Extension amqp und der
- * AMQP-Transport von Symfony Messenger erwarten. Messenger-Transports und AmqpLogHandler nutzen dieselben Daten.
+ * Connection data of RabbitMQ from the RABBITMQ_* variables, in the form that the amqp extension and the AMQP
+ * transport of Symfony Messenger expect. Messenger transports and the AmqpLogHandler use the same data.
  */
 final readonly class RabbitMqConfig
 {
     /**
-     * Übernimmt die Werte der Variablen RABBITMQ_*.
+     * Takes the values of the RABBITMQ_* variables.
      *
      * @param string $host      RABBITMQ_HOST
      * @param int    $port      RABBITMQ_PORT
      * @param string $user      RABBITMQ_USER
      * @param string $password  RABBITMQ_PASSWORD
      * @param string $vhost     RABBITMQ_VHOST
-     * @param bool   $secure    RABBITMQ_SECURE: true, wenn die Verbindung verschlüsselt sein muss (TLS)
-     * @param int    $heartbeat RABBITMQ_HEARTBEAT: Heartbeat-Intervall in Sekunden
+     * @param bool   $secure    RABBITMQ_SECURE: true if the connection must be encrypted (TLS)
+     * @param int    $heartbeat RABBITMQ_HEARTBEAT: heartbeat interval in seconds
      */
     public function __construct(
         private string $host,
@@ -36,9 +36,9 @@ final readonly class RabbitMqConfig
     }
 
     /**
-     * Prüft, ob die Verbindung verschlüsselt sein muss.
+     * Checks whether the connection must be encrypted.
      *
-     * @return bool true bei TLS
+     * @return bool true for TLS
      */
     public function isSecure(): bool
     {
@@ -46,9 +46,9 @@ final readonly class RabbitMqConfig
     }
 
     /**
-     * Liefert das Heartbeat-Intervall; der Broker schließt eine Verbindung nach zwei Intervallen ohne Datenverkehr.
+     * Returns the heartbeat interval; the broker closes a connection after two intervals without traffic.
      *
-     * @return int Intervall in Sekunden
+     * @return int interval in seconds
      */
     public function heartbeat(): int
     {
@@ -56,13 +56,13 @@ final readonly class RabbitMqConfig
     }
 
     /**
-     * Liefert die Verbindungsdaten für AMQPConnection, zugleich gültig als Optionen des AMQP-Transports. Eine
-     * verschlüsselte Verbindung erhält die CA-Zertifikate, gegen die der Server geprüft wird; die Extension amqp
-     * verschlüsselt die Verbindung, sobald ein CA-Zertifikat angegeben ist.
+     * Returns the connection data for AMQPConnection, also valid as options of the AMQP transport. An encrypted
+     * connection gets the CA certificates the server is verified against; the amqp extension encrypts the connection
+     * as soon as a CA certificate is given.
      *
-     * @param float $connectTimeout Zeitlimit für den Verbindungsaufbau in Sekunden
+     * @param float $connectTimeout timeout for connecting in seconds
      *
-     * @return array<string, string|int|float> die Verbindungsdaten
+     * @return array<string, string|int|float> the connection data
      */
     public function connectionOptions(float $connectTimeout): array
     {
@@ -84,9 +84,9 @@ final readonly class RabbitMqConfig
     }
 
     /**
-     * Liefert die CA-Zertifikate: die der Extension (amqp.cacert in der php.ini), sonst die des Systems.
+     * Returns the CA certificates: those of the extension (amqp.cacert in php.ini), otherwise those of the system.
      *
-     * @return string Pfad der Datei mit den Zertifikaten
+     * @return string path of the file with the certificates
      */
     private static function caCertificates(): string
     {

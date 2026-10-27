@@ -10,50 +10,49 @@ use Symfony\Component\Uid\Uuid;
 use ACAT\MessageBundle\Deletion\DeletionRequest;
 
 /**
- * Verhalten eines Service beim Löschauftrag, als Tests zum Einbinden in eine Testklasse des Service:
- * Löschung mit Rückmeldung <entität>.deleted, unbekannte und ungültige id mit <entität>.deletion.failed und
- * reason not_found, erneute Rückmeldung bei wiederholt zugestelltem Auftrag mit dem Zeitpunkt der
- * Erstverarbeitung. Der Service liefert die Hooks.
+ * Behaviour of a service on a deletion request, as tests to include in a test class of the service: deletion with
+ * the feedback <entity>.deleted, unknown and invalid id with <entity>.deletion.failed and reason not_found, repeated
+ * feedback with the time of the first processing when a request is delivered again. The service provides the hooks.
  */
 trait DeletionRequestContract
 {
     use EventFormatAssertions;
 
     /**
-     * Liefert den Namen der Entität, der den Rückmeldungen vorangestellt ist.
+     * Returns the name of the entity that prefixes the feedback events.
      *
-     * @return string z. B. person
+     * @return string e.g. person
      */
     abstract protected function deletionEntityName(): string;
 
     /**
-     * Legt eine Entität an, die gelöscht werden kann.
+     * Creates an entity that can be deleted.
      *
-     * @return string ihre id
+     * @return string its id
      */
     abstract protected function createEntityForDeletion(): string;
 
     /**
-     * Verarbeitet einen Löschauftrag wie der Event-Consumer des Service.
+     * Processes a deletion request like the event consumer of the service.
      *
-     * @param DeletionRequest $request Löschauftrag
+     * @param DeletionRequest $request deletion request
      *
      * @return void
      */
     abstract protected function handleDeletionRequest(DeletionRequest $request): void;
 
     /**
-     * Liefert die veröffentlichten oder in der Outbox abgelegten Rückmeldungen seit Beginn des Tests.
+     * Returns the feedback events published or written to the outbox since the start of the test.
      *
-     * @return list<array{type: string, body: string}> Event-Name und Body je Rückmeldung, in der Reihenfolge ihres
-     *                                                Entstehens
+     * @return list<array{type: string, body: string}> event name and body per feedback, in the order they were
+     *                                                created
      */
     abstract protected function publishedDeletionFeedback(): array;
 
     /**
-     * Prüft, dass die Entität gelöscht bzw. anonymisiert ist.
+     * Checks that the entity is deleted or anonymised.
      *
-     * @param string $id id der Entität
+     * @param string $id id of the entity
      *
      * @return void
      */
@@ -121,10 +120,10 @@ trait DeletionRequestContract
     }
 
     /**
-     * Prüft die Rückmeldung <entität>.deletion.failed mit reason not_found und der id wie übermittelt.
+     * Checks the feedback <entity>.deletion.failed with reason not_found and the id as it was sent.
      *
-     * @param string $ticketId ticketId des Auftrags
-     * @param string $id       id des Auftrags
+     * @param string $ticketId ticketId of the request
+     * @param string $id       id of the request
      *
      * @return void
      */
@@ -140,11 +139,11 @@ trait DeletionRequestContract
     }
 
     /**
-     * Liefert die Rückmeldungen zu einer ticketId.
+     * Returns the feedback events for a ticketId.
      *
-     * @param string $ticketId ticketId des Auftrags
+     * @param string $ticketId ticketId of the request
      *
-     * @return list<array{type: string, body: string}> die Rückmeldungen in der Reihenfolge ihres Entstehens
+     * @return list<array{type: string, body: string}> the feedback events in the order they were created
      */
     private function deletionFeedbackFor(string $ticketId): array
     {
@@ -163,9 +162,9 @@ trait DeletionRequestContract
     }
 
     /**
-     * Liefert eine eindeutige ticketId für einen Test.
+     * Returns a unique ticketId for a test.
      *
-     * @return string die ticketId
+     * @return string the ticketId
      */
     private static function contractTicketId(): string
     {

@@ -172,7 +172,7 @@ final class BundleIntegrationTest extends KernelTestCase
     }
 
     /**
-     * Liefert einen Transport-Serializer, wie Symfony ihn verwendet, ggf. umhüllt vom SigningSerializer.
+     * Returns a transport serializer as Symfony uses it, possibly wrapped by the SigningSerializer.
      */
     private static function serializer(string $id): SerializerInterface
     {

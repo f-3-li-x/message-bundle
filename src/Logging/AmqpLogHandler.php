@@ -12,14 +12,13 @@ use Psr\Clock\ClockInterface;
 use Monolog\Handler\AbstractHandler;
 
 /**
- * Gibt die Log-Einträge als Events an RabbitMQ weiter. Kapselt den nativen AmqpHandler von Monolog: Die
- * Verbindung entsteht erst mit dem ersten Log-Eintrag, und kein Fehler beim Verbindungsaufbau oder Senden erreicht
- * den Aufrufer. Logging an RabbitMQ lässt eine Anfrage oder die Verarbeitung einer Nachricht nie scheitern; das
- * Datei-Log bleibt vollständig.
+ * Passes the log records on to RabbitMQ as events. Wraps the native AmqpHandler of Monolog: the connection is opened
+ * with the first log record only, and no failure when connecting or sending reaches the caller. Logging to RabbitMQ
+ * never makes a request or the processing of a message fail; the file log stays complete.
  */
 final class AmqpLogHandler extends AbstractHandler
 {
-    /** Sekunden ohne neuen Verbindungsaufbau nach einem Fehler */
+    /** Seconds without a new connection attempt after a failure */
     public const int RETRY_PAUSE = 60;
 
     private ?LogEventAmqpHandler $handler = null;
@@ -27,15 +26,15 @@ final class AmqpLogHandler extends AbstractHandler
     private int $pausedUntil = 0;
 
     /**
-     * Erzeugt den Handler ohne Verbindungsaufbau.
+     * Creates the handler without connecting.
      *
-     * @param AmqpExchangeFactoryInterface $exchangeFactory Aufbau der Verbindung und des Exchange
-     * @param string                       $service         Name des Service für Routing-Key und app_id
-     * @param int                          $heartbeat       Heartbeat-Intervall der Verbindung in Sekunden, 0 ohne
-     * @param ClockInterface               $clock           Uhr für Pause, Leerlauf und AMQP-Property timestamp
-     * @param bool                         $enabled         false schaltet den Handler ab, z. B. in der Umgebung test
-     * @param Level                        $level           niedrigstes Level, das weitergegeben wird
-     * @param bool                         $bubble          ob ein weitergegebener Eintrag an die folgenden Handler geht
+     * @param AmqpExchangeFactoryInterface $exchangeFactory opens the connection and returns the exchange
+     * @param string                       $service         name of the service for routing key and app_id
+     * @param int                          $heartbeat       heartbeat interval of the connection in seconds, 0 for none
+     * @param ClockInterface               $clock           clock for the pause, idle time and the AMQP property timestamp
+     * @param bool                         $enabled         false disables the handler, e.g. in the test environment
+     * @param Level                        $level           lowest level that is passed on
+     * @param bool                         $bubble          whether a passed record goes on to the following handlers
      */
     public function __construct(
         private readonly AmqpExchangeFactoryInterface $exchangeFactory,
@@ -50,11 +49,11 @@ final class AmqpLogHandler extends AbstractHandler
     }
 
     /**
-     * Prüft, ob der Handler den Eintrag weitergibt.
+     * Checks whether the handler passes the record on.
      *
-     * @param LogRecord $record Log-Eintrag
+     * @param LogRecord $record log record
      *
-     * @return bool false, wenn der Handler abgeschaltet ist oder das Level des Eintrags zu niedrig ist
+     * @return bool false if the handler is disabled or the level of the record is too low
      */
     public function isHandling(LogRecord $record): bool
     {
@@ -62,13 +61,12 @@ final class AmqpLogHandler extends AbstractHandler
     }
 
     /**
-     * Gibt den Eintrag an RabbitMQ weiter und fängt jeden Fehler ab. Scheitert eine offene Verbindung, wird für den
-     * Eintrag einmal eine neue aufgebaut; nach dem letzten Fehlversuch wird 60 Sekunden lang keine Verbindung
-     * aufgebaut.
+     * Passes the record on to RabbitMQ and catches every failure. If an open connection fails, one new connection is
+     * opened for the record; after the last failed attempt no connection is opened for 60 seconds.
      *
-     * @param LogRecord $record Log-Eintrag
+     * @param LogRecord $record log record
      *
-     * @return bool false, wenn der Eintrag nicht weitergegeben wird oder an die folgenden Handler geht
+     * @return bool false if the record is not passed on or goes on to the following handlers
      */
     public function handle(LogRecord $record): bool
     {
@@ -96,7 +94,7 @@ final class AmqpLogHandler extends AbstractHandler
     }
 
     /**
-     * Verwirft die offene Verbindung.
+     * Drops the open connection.
      *
      * @return void
      */
@@ -106,16 +104,16 @@ final class AmqpLogHandler extends AbstractHandler
     }
 
     /**
-     * Gibt den Eintrag an den nativen Handler weiter und baut vorher die Verbindung auf, falls keine offen ist. Eine
-     * Verbindung, die ein Heartbeat-Intervall lang ungenutzt war, wird ersetzt: Die Extension amqp sendet Heartbeats
-     * nur, während sie auf den Broker wartet, und der Broker schließt eine ungenutzte Verbindung. Während der Pause
-     * nach einem Fehler wird der Eintrag ohne Verbindungsaufbau verworfen.
+     * Passes the record on to the native handler, connecting first if no connection is open. A connection that was
+     * idle for a heartbeat interval is replaced: the amqp extension sends heartbeats only while it waits for the
+     * broker, and the broker closes an idle connection. During the pause after a failure, the record is dropped
+     * without a connection attempt.
      *
-     * @param LogRecord $record Log-Eintrag
+     * @param LogRecord $record log record
      *
      * @return void
      *
-     * @throws AMQPException wenn Verbindungsaufbau oder Senden scheitert
+     * @throws AMQPException if connecting or sending fails
      */
     private function publish(LogRecord $record): void
     {
@@ -138,9 +136,9 @@ final class AmqpLogHandler extends AbstractHandler
     }
 
     /**
-     * Liefert die aktuelle Zeit.
+     * Returns the current time.
      *
-     * @return int Unix-Zeit in Sekunden
+     * @return int Unix time in seconds
      */
     private function now(): int
     {

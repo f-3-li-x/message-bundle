@@ -11,26 +11,24 @@ use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 /**
- * Wiederholt die Verarbeitung einer konsumierten Nachricht bei einem technischen Fehler innerhalb desselben
- * Prozesses: höchstens RABBITMQ_RETRY Versuche mit den festen Wartezeiten 1, 2, 4, 8, 8, 8, 8, 8 und 8
- * Sekunden. Die Nachricht bleibt währenddessen unbestätigt; Symfony Messenger selbst wiederholt nicht
- * (max_retries: 0).
+ * Retries the processing of a consumed message after a technical failure within the same process: at most
+ * RABBITMQ_RETRY attempts with the fixed waiting times 1, 2, 4, 8, 8, 8, 8, 8 and 8 seconds. The message stays
+ * unacknowledged in the meantime; Symfony Messenger itself does not retry (max_retries: 0).
  */
 final readonly class RetryingExecutor
 {
-    /** @var list<int> Wartezeit in Sekunden nach dem ersten, zweiten, ... fehlgeschlagenen Versuch */
+    /** @var list<int> waiting time in seconds after the first, second, ... failed attempt */
     public const array WAIT_SECONDS = [1, 2, 4, 8, 8, 8, 8, 8, 8];
 
     private int $maxAttempts;
 
     /**
-     * Erzeugt die Wiederholung. Die Zahl der Versuche liegt zwischen 1 und 10, da es neun feste Wartezeiten gibt.
+     * Creates the executor. The number of attempts lies between 1 and 10, as there are nine fixed waiting times.
      *
-     * @param int             $maxAttempts     Wert von RABBITMQ_RETRY: höchste Zahl der Versuche je Nachricht
-     * @param ManagerRegistry $managerRegistry Zugang zum EntityManager, der vor jedem erneuten Versuch
-     *                                         zurückgesetzt wird
-     * @param ClockInterface  $clock           Uhr, über die gewartet wird; in Tests ersetzbar
-     * @param LoggerInterface $logger          Protokoll der fehlgeschlagenen Versuche
+     * @param int             $maxAttempts     value of RABBITMQ_RETRY: maximum number of attempts per message
+     * @param ManagerRegistry $managerRegistry access to the EntityManager, which is reset before every further attempt
+     * @param ClockInterface  $clock           clock used for waiting; replaceable in tests
+     * @param LoggerInterface $logger          log of the failed attempts
      */
     public function __construct(
         int $maxAttempts,
@@ -42,9 +40,9 @@ final readonly class RetryingExecutor
     }
 
     /**
-     * Liefert die höchste Zahl der Versuche je Nachricht.
+     * Returns the maximum number of attempts per message.
      *
-     * @return int zwischen 1 und 10
+     * @return int between 1 and 10
      */
     public function maxAttempts(): int
     {
@@ -52,17 +50,17 @@ final readonly class RetryingExecutor
     }
 
     /**
-     * Führt die Verarbeitung aus und wiederholt sie nach jedem Fehler, bis sie gelingt oder die Versuche
-     * aufgebraucht sind. Vor jedem erneuten Versuch wird gewartet und danach der EntityManager zurückgesetzt, da
-     * Doctrine ihn nach einem Fehler in einer Transaktion schließt.
+     * Runs the processing and repeats it after every failure until it succeeds or the attempts are used up. Before
+     * every further attempt, it waits and then resets the EntityManager, since Doctrine closes it after a failure in a
+     * transaction.
      *
-     * @param callable(): mixed     $operation Verarbeitung der Nachricht
-     * @param array<string, string> $context   unkritische Angaben zur Nachricht für das Protokoll, z. B. ticketId
+     * @param callable(): mixed     $operation processing of the message
+     * @param array<string, string> $context   non-sensitive details of the message for the log, e.g. ticketId
      *
      * @return void
      *
-     * @throws UnrecoverableMessageHandlingException wenn auch der letzte Versuch fehlschlägt; Symfony Messenger
-     *                                               lehnt die Nachricht daraufhin ab (reject ohne Requeue)
+     * @throws UnrecoverableMessageHandlingException if the last attempt fails as well; Symfony Messenger then
+     *                                               rejects the message (reject without requeue)
      */
     public function run(callable $operation, array $context = []): void
     {
@@ -86,11 +84,11 @@ final readonly class RetryingExecutor
     }
 
     /**
-     * Protokolliert den fehlgeschlagenen Versuch, wartet die feste Wartezeit ab und setzt den EntityManager zurück.
+     * Logs the failed attempt, waits the fixed waiting time and resets the EntityManager.
      *
-     * @param int                   $attempt Nummer des fehlgeschlagenen Versuchs, beginnend bei 1
-     * @param Throwable             $failure aufgetretener Fehler
-     * @param array<string, string> $context unkritische Angaben zur Nachricht für das Protokoll
+     * @param int                   $attempt number of the failed attempt, starting at 1
+     * @param Throwable             $failure the failure that occurred
+     * @param array<string, string> $context non-sensitive details of the message for the log
      *
      * @return void
      */

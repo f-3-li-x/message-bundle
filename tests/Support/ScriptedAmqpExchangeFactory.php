@@ -10,8 +10,8 @@ use LogicException;
 use ACAT\MessageBundle\Logging\AmqpExchangeFactoryInterface;
 
 /**
- * Test-Double für den Verbindungsaufbau des AmqpLogHandler: liefert der Reihe nach die hinterlegten Exchanges
- * oder wirft die hinterlegten Fehler; das letzte Ergebnis gilt für alle weiteren Versuche.
+ * Test double for the connection of the AmqpLogHandler: returns the given exchanges or throws the given failures
+ * in turn; the last result applies to all further attempts.
  */
 final class ScriptedAmqpExchangeFactory implements AmqpExchangeFactoryInterface
 {
@@ -21,9 +21,9 @@ final class ScriptedAmqpExchangeFactory implements AmqpExchangeFactoryInterface
     private int $connectionAttempts = 0;
 
     /**
-     * Hinterlegt die Ergebnisse der Verbindungsversuche.
+     * Sets the results of the connection attempts.
      *
-     * @param AMQPExchange|AMQPException ...$results Ergebnisse in der Reihenfolge der Versuche
+     * @param AMQPExchange|AMQPException ...$results results in the order of the attempts
      */
     public function __construct(AMQPExchange|AMQPException ...$results)
     {
@@ -31,11 +31,11 @@ final class ScriptedAmqpExchangeFactory implements AmqpExchangeFactoryInterface
     }
 
     /**
-     * Liefert das nächste Ergebnis.
+     * Returns the next result.
      *
-     * @return AMQPExchange der hinterlegte Exchange
+     * @return AMQPExchange the given exchange
      *
-     * @throws AMQPException der hinterlegte Fehler
+     * @throws AMQPException the given failure
      */
     public function create(): AMQPExchange
     {
@@ -54,9 +54,9 @@ final class ScriptedAmqpExchangeFactory implements AmqpExchangeFactoryInterface
     }
 
     /**
-     * Liefert die Zahl der Verbindungsversuche.
+     * Returns the number of connection attempts.
      *
-     * @return int die Versuche
+     * @return int the attempts
      */
     public function connectionAttempts(): int
     {

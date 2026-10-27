@@ -9,17 +9,17 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 /**
- * Serializer der Transports, über die der Outbox-Publisher veröffentlicht: Der Body der Nachricht ist
- * ausschließlich das Payload des Events. Es entstehen keine Header; die AMQP-Properties setzt der AmqpStamp.
+ * Serializer of the transports the outbox publisher publishes through: the body of the message is only the payload of
+ * the event. No headers are created; the AmqpStamp sets the AMQP properties.
  */
 final readonly class BodySerializer implements SerializerInterface
 {
     /**
-     * Bildet aus einer kodierten Nachricht den Umschlag mit der RawMessage.
+     * Turns an encoded message into an envelope with a RawMessage.
      *
-     * @param array{body: string, headers?: array<string, string>} $encodedEnvelope kodierte Nachricht
+     * @param array{body: string, headers?: array<string, string>} $encodedEnvelope encoded message
      *
-     * @return Envelope der Umschlag mit dem Body der Nachricht
+     * @return Envelope the envelope with the body of the message
      */
     public function decode(array $encodedEnvelope): Envelope
     {
@@ -27,13 +27,13 @@ final readonly class BodySerializer implements SerializerInterface
     }
 
     /**
-     * Kodiert den Umschlag einer RawMessage: Der Body wird unverändert übernommen.
+     * Encodes the envelope of a RawMessage: the body is taken over unchanged.
      *
-     * @param Envelope $envelope Umschlag mit einer RawMessage
+     * @param Envelope $envelope envelope with a RawMessage
      *
-     * @return array{body: string} die kodierte Nachricht
+     * @return array{body: string} the encoded message
      *
-     * @throws LogicException wenn der Umschlag keine RawMessage enthält
+     * @throws LogicException if the envelope does not contain a RawMessage
      */
     public function encode(Envelope $envelope): array
     {

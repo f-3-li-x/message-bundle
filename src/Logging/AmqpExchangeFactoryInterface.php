@@ -8,17 +8,17 @@ use AMQPExchange;
 use AMQPException;
 
 /**
- * Baut die Verbindung zu RabbitMQ auf und liefert den Exchange, an den die Log-Events gehen. Tests ersetzen die
- * Verbindung über dieses Interface.
+ * Connects to RabbitMQ and returns the exchange the log events go to. Tests replace the connection through this
+ * interface.
  */
 interface AmqpExchangeFactoryInterface
 {
     /**
-     * Baut eine neue Verbindung auf und liefert den Exchange des Service auf einem neuen Kanal.
+     * Opens a new connection and returns the exchange of the service on a new channel.
      *
-     * @return AMQPExchange der Exchange auf einer offenen Verbindung
+     * @return AMQPExchange the exchange on an open connection
      *
-     * @throws AMQPException wenn die Verbindung nicht aufgebaut werden kann
+     * @throws AMQPException if the connection cannot be established
      */
     public function create(): AMQPExchange;
 }

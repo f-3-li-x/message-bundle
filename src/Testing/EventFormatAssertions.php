@@ -8,19 +8,19 @@ use JsonException;
 use PHPUnit\Framework\Assert;
 
 /**
- * Assertions für das Event-Format: Felder und ihre Reihenfolge, Timestamp, Aufbau der
- * delta-Einträge einschließlich Maskierung. Geprüft wird der Body, wie er an RabbitMQ geht.
+ * Assertions for the event format: fields and their order, timestamp, structure of the delta entries including
+ * masking. They check the body as it is sent to RabbitMQ.
  */
 trait EventFormatAssertions
 {
-    /** UTC nach RFC 3339 mit Millisekunden und Suffix Z */
+    /** UTC per RFC 3339 with milliseconds and the suffix Z */
     private const string TIMESTAMP_PATTERN = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/';
 
     /**
-     * Prüft einen Zeitpunkt im Format YYYY-MM-DDTHH:mm:ss.SSSZ.
+     * Checks a point in time in the format YYYY-MM-DDTHH:mm:ss.SSSZ.
      *
-     * @param mixed  $value Wert aus dem Payload
-     * @param string $field Name des Feldes für die Meldung
+     * @param mixed  $value value from the payload
+     * @param string $field name of the field for the failure message
      *
      * @return void
      */
@@ -35,11 +35,11 @@ trait EventFormatAssertions
     }
 
     /**
-     * Prüft <entität>.created: genau id, actorId, timestamp in dieser Reihenfolge.
+     * Checks <entity>.created: exactly id, actorId, timestamp in this order.
      *
-     * @param string $body Body der Nachricht
+     * @param string $body body of the message
      *
-     * @return array<string, mixed> das Payload
+     * @return array<string, mixed> the payload
      */
     public static function assertCreatedEvent(string $body): array
     {
@@ -54,12 +54,12 @@ trait EventFormatAssertions
     }
 
     /**
-     * Prüft <entität>.updated: genau id, actorId, timestamp, delta in dieser Reihenfolge, delta nicht leer und
-     * jeder Eintrag wie unter assertDeltaEntry beschrieben.
+     * Checks <entity>.updated: exactly id, actorId, timestamp, delta in this order, delta not empty and every entry
+     * as described for assertDeltaEntry.
      *
-     * @param string $body Body der Nachricht
+     * @param string $body body of the message
      *
-     * @return array<string, mixed> das Payload
+     * @return array<string, mixed> the payload
      */
     public static function assertUpdatedEvent(string $body): array
     {
@@ -80,11 +80,10 @@ trait EventFormatAssertions
     }
 
     /**
-     * Prüft einen Eintrag in delta: field und operation; ohne Maskierung oldValue und newValue, bei added oldValue
-     * null, bei removed newValue null; bei einer maskierten Änderung eines Feldes (changed) nur field, operation und
-     * masked: true.
+     * Checks an entry in delta: field and operation; without masking oldValue and newValue, oldValue null for added,
+     * newValue null for removed; for a masked change of a field (changed) only field, operation and masked: true.
      *
-     * @param mixed $entry Eintrag aus delta
+     * @param mixed $entry entry from delta
      *
      * @return void
      */
@@ -119,11 +118,11 @@ trait EventFormatAssertions
     }
 
     /**
-     * Prüft <entität>.deleted: genau id, timestamp, ticketId in dieser Reihenfolge.
+     * Checks <entity>.deleted: exactly id, timestamp, ticketId in this order.
      *
-     * @param string $body Body der Nachricht
+     * @param string $body body of the message
      *
-     * @return array<string, mixed> das Payload
+     * @return array<string, mixed> the payload
      */
     public static function assertDeletedEvent(string $body): array
     {
@@ -136,11 +135,11 @@ trait EventFormatAssertions
     }
 
     /**
-     * Prüft <entität>.deletion.failed: genau id, timestamp, ticketId, reason in dieser Reihenfolge.
+     * Checks <entity>.deletion.failed: exactly id, timestamp, ticketId, reason in this order.
      *
-     * @param string $body Body der Nachricht
+     * @param string $body body of the message
      *
-     * @return array<string, mixed> das Payload
+     * @return array<string, mixed> the payload
      */
     public static function assertDeletionFailedEvent(string $body): array
     {
@@ -154,11 +153,11 @@ trait EventFormatAssertions
     }
 
     /**
-     * Prüft <gegenstand>.deletion.processed: zuerst id, timestamp, ticketId; servicespezifische Felder folgen.
+     * Checks <subject>.deletion.processed: first id, timestamp, ticketId; service-specific fields follow.
      *
-     * @param string $body Body der Nachricht
+     * @param string $body body of the message
      *
-     * @return array<string, mixed> das Payload
+     * @return array<string, mixed> the payload
      */
     public static function assertDeletionProcessedEvent(string $body): array
     {
@@ -175,9 +174,9 @@ trait EventFormatAssertions
     }
 
     /**
-     * Prüft die gemeinsamen Felder einer Rückmeldung zu einem Löschauftrag; actorId gehört nicht dazu.
+     * Checks the common fields of a feedback on a deletion request; actorId is not one of them.
      *
-     * @param array<string, mixed> $payload Payload der Rückmeldung
+     * @param array<string, mixed> $payload payload of the feedback
      *
      * @return void
      */
@@ -190,10 +189,10 @@ trait EventFormatAssertions
     }
 
     /**
-     * Prüft, dass ein Wert ein nicht leerer String ist.
+     * Checks that a value is a non-empty string.
      *
-     * @param mixed  $value Wert
-     * @param string $field Name des Feldes für die Meldung
+     * @param mixed  $value value
+     * @param string $field name of the field for the failure message
      *
      * @return void
      */
@@ -204,11 +203,11 @@ trait EventFormatAssertions
     }
 
     /**
-     * Dekodiert den Body als JSON-Objekt; die Reihenfolge der Felder bleibt erhalten.
+     * Decodes the body as a JSON object; the order of the fields is kept.
      *
-     * @param string $body Body der Nachricht
+     * @param string $body body of the message
      *
-     * @return array<string, mixed> das Payload
+     * @return array<string, mixed> the payload
      */
     private static function decodeEventBody(string $body): array
     {

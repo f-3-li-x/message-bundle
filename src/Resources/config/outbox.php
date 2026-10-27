@@ -18,8 +18,8 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 /*
- * Transactional Outbox: Writer, Zugriff auf die Tabelle outbox_entries, Übergabe an RabbitMQ über die
- * Messenger-Transports je Exchange, Publisher und die Konsolenkommandos im konfigurierten Namensraum.
+ * Transactional outbox: writer, access to the table outbox_entries, handover to RabbitMQ via the Messenger
+ * transports per exchange, publisher and the console commands in the configured namespace.
  */
 return static function (ContainerConfigurator $configurator, ContainerBuilder $container): void {
     $service = $container->getParameter(MessageExtension::PARAMETER_SERVICE);

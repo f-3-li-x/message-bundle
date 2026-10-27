@@ -13,16 +13,16 @@ use ACAT\MessageBundle\Message\AmqpProperties;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 
 /**
- * Assertions für das Nachrichtenformat: AMQP-Properties, Routing-Key und Body ohne Header.
+ * Assertions for the message format: AMQP properties, routing key and body without headers.
  */
 trait AmqpMessageAssertions
 {
     /**
-     * Prüft die AMQP-Properties einer Nachricht; ihre Reihenfolge spielt keine Rolle.
+     * Checks the AMQP properties of a message; their order does not matter.
      *
-     * @param array<array-key, mixed> $attributes AMQP-Properties
-     * @param string                  $type       erwarteter Routing-Key, z. B. person.updated
-     * @param string                  $appId      erwarteter Name des Service
+     * @param array<array-key, mixed> $attributes AMQP properties
+     * @param string                  $type       expected routing key, e.g. person.updated
+     * @param string                  $appId      expected name of the service
      *
      * @return void
      */
@@ -46,13 +46,13 @@ trait AmqpMessageAssertions
     }
 
     /**
-     * Prüft einen veröffentlichten Umschlag des Outbox-Publishers und liefert seinen Body.
+     * Checks an envelope published by the outbox publisher and returns its body.
      *
-     * @param Envelope $envelope veröffentlichter Umschlag, z. B. aus einem In-Memory-Transport
-     * @param string   $type     erwarteter Event-Name, zugleich Routing-Key
-     * @param string   $appId    erwarteter Name des Service
+     * @param Envelope $envelope published envelope, e.g. from an in-memory transport
+     * @param string   $type     expected event name, also the routing key
+     * @param string   $appId    expected name of the service
      *
-     * @return string der Body, das Payload als JSON
+     * @return string the body, the payload as JSON
      */
     public static function assertPublishedEvent(Envelope $envelope, string $type, string $appId): string
     {
@@ -68,9 +68,9 @@ trait AmqpMessageAssertions
     }
 
     /**
-     * Prüft, dass eine kodierte Nachricht keine Header trägt.
+     * Checks that an encoded message carries no headers.
      *
-     * @param array<array-key, mixed> $encodedEnvelope kodierte Nachricht eines Transport-Serializers
+     * @param array<array-key, mixed> $encodedEnvelope encoded message of a transport serializer
      *
      * @return void
      */

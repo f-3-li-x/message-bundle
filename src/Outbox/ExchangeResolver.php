@@ -5,22 +5,21 @@ declare(strict_types=1);
 namespace ACAT\MessageBundle\Outbox;
 
 /**
- * Ordnet einem Event den Exchange zu: Die konfigurierten Änderungsereignisse gehen an den zentralen Exchange,
- * sofern einer konfiguriert ist, alle übrigen Events (z. B. Rückmeldungen zu Löschaufträgen) an den Exchange des
- * Service.
+ * Assigns the exchange to an event: the configured change events go to the central exchange, if one is configured,
+ * all other events (e.g. feedback on deletion requests) to the exchange of the service.
  */
 final readonly class ExchangeResolver
 {
-    /** @var list<string> reguläre Ausdrücke der Event-Typen für den zentralen Exchange */
+    /** @var list<string> regular expressions of the event types for the central exchange */
     private array $centralPatterns;
 
     /**
-     * Erzeugt die Zuordnung.
+     * Creates the resolver.
      *
-     * @param string       $service           Name des Service, zugleich Name seines Exchange
-     * @param string|null  $centralExchange   zentraler Exchange oder null, wenn alle Events an den Service gehen
-     * @param list<string> $centralEventTypes Event-Typen für den zentralen Exchange; * steht wie bei RabbitMQ für
-     *                                        genau ein Wort, z. B. *.created
+     * @param string       $service           name of the service, also the name of its exchange
+     * @param string|null  $centralExchange   central exchange, or null if all events go to the service
+     * @param list<string> $centralEventTypes event types for the central exchange; as in RabbitMQ, * stands for
+     *                                        exactly one word, e.g. *.created
      */
     public function __construct(
         private string $service,
@@ -31,11 +30,11 @@ final readonly class ExchangeResolver
     }
 
     /**
-     * Liefert den Exchange eines Events.
+     * Returns the exchange of an event.
      *
-     * @param string $eventType Event-Name, z. B. person.updated
+     * @param string $eventType event name, e.g. person.updated
      *
-     * @return string der zentrale Exchange für die konfigurierten Event-Typen, sonst der Name des Service
+     * @return string the central exchange for the configured event types, otherwise the name of the service
      */
     public function exchangeFor(string $eventType): string
     {
@@ -53,11 +52,11 @@ final readonly class ExchangeResolver
     }
 
     /**
-     * Bildet aus einem Event-Typ mit Platzhaltern einen regulären Ausdruck.
+     * Turns an event type with wildcards into a regular expression.
      *
-     * @param string $eventType Event-Typ, z. B. *.created
+     * @param string $eventType event type, e.g. *.created
      *
-     * @return string der reguläre Ausdruck, z. B. /^[^.]+\.created$/
+     * @return string the regular expression, e.g. /^[^.]+\.created$/
      */
     private static function toRegex(string $eventType): string
     {

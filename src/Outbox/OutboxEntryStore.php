@@ -8,41 +8,41 @@ use Symfony\Component\Uid\Uuid;
 use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
- * Zugriff des Outbox-Publishers und der Konsolenkommandos auf die Einträge der Tabelle outbox_entries.
+ * Access of the outbox publisher and the console commands to the entries of the table outbox_entries.
  */
 interface OutboxEntryStore
 {
     /**
-     * Liefert alle Einträge, ausstehende wie fehlgeschlagene, in der Reihenfolge der Zustellung.
+     * Returns all entries, pending and failed, in the order of delivery.
      *
-     * @return list<OutboxEntry> die Einträge, sortiert nach created_at, bei Gleichstand nach id
+     * @return list<OutboxEntry> the entries, ordered by created_at, then by id
      */
     public function findAllOrdered(): array;
 
     /**
-     * Speichert Versuchszähler und Status eines Eintrags sofort.
+     * Saves the attempt counter and status of an entry immediately.
      *
-     * @param OutboxEntry $entry geänderter Eintrag
+     * @param OutboxEntry $entry changed entry
      *
      * @return void
      */
     public function save(OutboxEntry $entry): void;
 
     /**
-     * Löscht einen Eintrag sofort, unmittelbar nach bestätigter Zustellung.
+     * Deletes an entry immediately, right after its delivery is confirmed.
      *
-     * @param OutboxEntry $entry zugestellter Eintrag
+     * @param OutboxEntry $entry delivered entry
      *
      * @return void
      */
     public function remove(OutboxEntry $entry): void;
 
     /**
-     * Setzt fehlgeschlagene Einträge auf pending und den Versuchszähler auf 0.
+     * Sets failed entries back to pending and the attempt counter to 0.
      *
-     * @param Uuid|null $id UUID eines einzelnen Eintrags oder null für alle fehlgeschlagenen Einträge
+     * @param Uuid|null $id UUID of a single entry, or null for all failed entries
      *
-     * @return int Anzahl der wieder angestoßenen Einträge
+     * @return int number of entries retried
      */
     public function retryFailed(?Uuid $id = null): int;
 }

@@ -13,10 +13,10 @@ use Symfony\Component\Messenger\Exception\MessageDecodingFailedException;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 /**
- * Transport-Serializer für Löschaufträge (deletion.requested): dekodiert den rohen JSON-Body der Nachricht
- * (Payload id und ticketId). Ein strukturell ungültiger Auftrag wird als nicht dekodierbar gemeldet; Symfony
- * Messenger lehnt ihn dann ohne Wiederholung ab (reject ohne Requeue) und protokolliert die Ablehnung mit dem hier
- * genannten Grund. Der Grund nennt das betroffene Feld, nie einen Wert.
+ * Transport serializer for deletion requests (deletion.requested): decodes the raw JSON body of the message (payload
+ * id and ticketId). A structurally invalid request is reported as not decodable; Symfony Messenger then rejects it
+ * without retries (reject without requeue) and logs the rejection with the reason given here. The reason names the
+ * affected field, never a value.
  */
 final readonly class DeletionRequestSerializer implements SerializerInterface
 {
@@ -25,14 +25,14 @@ final readonly class DeletionRequestSerializer implements SerializerInterface
     private const string JSON_WHITESPACE = " \t\n\r";
 
     /**
-     * Dekodiert den Löschauftrag. Strukturell ungültig ist er, wenn das Payload leer, kein gültiges JSON oder kein
-     * JSON-Objekt ist oder wenn id oder ticketId fehlt, leer ist, kein String ist oder länger als 255 Zeichen ist.
-     * Unbekannte zusätzliche Felder werden ignoriert.
+     * Decodes the deletion request. It is structurally invalid if the payload is empty, not valid JSON or not a JSON
+     * object, or if id or ticketId is missing, empty, not a string or longer than 255 characters. Unknown additional
+     * fields are ignored.
      *
-     * @param array{body: string, headers?: array<string, string>} $encodedEnvelope rohe Nachricht des Transports
+     * @param array{body: string, headers?: array<string, string>} $encodedEnvelope raw message of the transport
      *
-     * @return Envelope der Löschauftrag oder, bei einem strukturell ungültigen Auftrag, die nicht dekodierbare
-     *                  Nachricht als MessageDecodingFailedException
+     * @return Envelope the deletion request or, for a structurally invalid request, the undecodable message as
+     *                  MessageDecodingFailedException
      */
     public function decode(array $encodedEnvelope): Envelope
     {
@@ -52,15 +52,15 @@ final readonly class DeletionRequestSerializer implements SerializerInterface
     }
 
     /**
-     * Kodiert einen Löschauftrag als JSON-Body mit id und ticketId. Eine nicht dekodierbare Nachricht behält ihre
-     * ursprüngliche rohe Form.
+     * Encodes a deletion request as a JSON body with id and ticketId. An undecodable message keeps its original raw
+     * form.
      *
-     * @param Envelope $envelope Löschauftrag oder nicht dekodierbare Nachricht
+     * @param Envelope $envelope deletion request or undecodable message
      *
-     * @return array{body: string, headers?: array<string, string>} rohe Nachricht für den Transport
+     * @return array{body: string, headers?: array<string, string>} raw message for the transport
      *
-     * @throws LogicException wenn die Nachricht kein Löschauftrag ist
-     * @throws JsonException  wenn sich der Löschauftrag nicht als JSON kodieren lässt
+     * @throws LogicException if the message is not a deletion request
+     * @throws JsonException  if the deletion request cannot be encoded as JSON
      */
     public function encode(Envelope $envelope): array
     {
@@ -81,13 +81,13 @@ final readonly class DeletionRequestSerializer implements SerializerInterface
     }
 
     /**
-     * Dekodiert den Body als JSON-Objekt. Als leer gilt auch ein Body, der nur aus Leerraum nach JSON besteht.
+     * Decodes the body as a JSON object. A body consisting only of JSON whitespace also counts as empty.
      *
-     * @param string $body roher Body der Nachricht
+     * @param string $body raw body of the message
      *
-     * @return array<array-key, mixed> Felder des JSON-Objekts
+     * @return array<array-key, mixed> fields of the JSON object
      *
-     * @throws UnexpectedValueException wenn der Body leer, kein gültiges JSON oder kein JSON-Objekt ist
+     * @throws UnexpectedValueException if the body is empty, not valid JSON or not a JSON object
      */
     private static function decodeJsonObject(string $body): array
     {
@@ -109,14 +109,14 @@ final readonly class DeletionRequestSerializer implements SerializerInterface
     }
 
     /**
-     * Liest ein Pflichtfeld des Payloads.
+     * Reads a required field of the payload.
      *
-     * @param array<array-key, mixed> $payload Felder des JSON-Objekts
-     * @param string                  $field   Name des Feldes
+     * @param array<array-key, mixed> $payload fields of the JSON object
+     * @param string                  $field   name of the field
      *
-     * @return string der Wert des Feldes
+     * @return string the value of the field
      *
-     * @throws UnexpectedValueException wenn das Feld fehlt, kein String, leer oder länger als 255 Zeichen ist
+     * @throws UnexpectedValueException if the field is missing, not a string, empty or longer than 255 characters
      */
     private static function readField(array $payload, string $field): string
     {
@@ -144,11 +144,11 @@ final readonly class DeletionRequestSerializer implements SerializerInterface
     }
 
     /**
-     * Liefert die rohe Form einer nicht dekodierbaren Nachricht, wie sie empfangen wurde.
+     * Returns the raw form of an undecodable message as it was received.
      *
-     * @param MessageDecodingFailedException $failure nicht dekodierbare Nachricht
+     * @param MessageDecodingFailedException $failure undecodable message
      *
-     * @return array{body: string, headers?: array<string, string>} rohe Nachricht für den Transport
+     * @return array{body: string, headers?: array<string, string>} raw message for the transport
      */
     private static function originalEncodedEnvelope(MessageDecodingFailedException $failure): array
     {

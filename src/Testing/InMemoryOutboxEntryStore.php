@@ -9,17 +9,17 @@ use ACAT\MessageBundle\Outbox\OutboxEntryStore;
 use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
- * Test-Double für die Tabelle outbox_entries: hält die Einträge im Speicher.
+ * Test double for the table outbox_entries: keeps the entries in memory.
  */
 final class InMemoryOutboxEntryStore implements OutboxEntryStore
 {
-    /** @var array<string, OutboxEntry> Einträge, Schlüssel ist die UUID im Format RFC 4122 */
+    /** @var array<string, OutboxEntry> entries, keyed by the UUID in RFC 4122 format */
     private array $entries = [];
 
     /**
-     * Erzeugt den Speicher mit vorhandenen Einträgen.
+     * Creates the store with existing entries.
      *
-     * @param OutboxEntry ...$entries vorhandene Einträge
+     * @param OutboxEntry ...$entries existing entries
      */
     public function __construct(OutboxEntry ...$entries)
     {
@@ -29,9 +29,9 @@ final class InMemoryOutboxEntryStore implements OutboxEntryStore
     }
 
     /**
-     * Legt einen Eintrag ab.
+     * Adds an entry.
      *
-     * @param OutboxEntry $entry Eintrag
+     * @param OutboxEntry $entry entry
      *
      * @return void
      */
@@ -41,9 +41,9 @@ final class InMemoryOutboxEntryStore implements OutboxEntryStore
     }
 
     /**
-     * Liefert alle Einträge, ausstehende wie fehlgeschlagene, in der Reihenfolge der Zustellung.
+     * Returns all entries, pending and failed, in the order of delivery.
      *
-     * @return list<OutboxEntry> die Einträge, sortiert nach created_at, bei Gleichstand nach id
+     * @return list<OutboxEntry> the entries, ordered by created_at, then by id
      */
     public function findAllOrdered(): array
     {
@@ -56,9 +56,9 @@ final class InMemoryOutboxEntryStore implements OutboxEntryStore
     }
 
     /**
-     * Speichert einen Eintrag; im Speicher ist er bereits geändert.
+     * Saves an entry; in memory it is already changed.
      *
-     * @param OutboxEntry $entry geänderter Eintrag
+     * @param OutboxEntry $entry changed entry
      *
      * @return void
      */
@@ -68,9 +68,9 @@ final class InMemoryOutboxEntryStore implements OutboxEntryStore
     }
 
     /**
-     * Löscht einen Eintrag.
+     * Deletes an entry.
      *
-     * @param OutboxEntry $entry zugestellter Eintrag
+     * @param OutboxEntry $entry delivered entry
      *
      * @return void
      */
@@ -80,11 +80,11 @@ final class InMemoryOutboxEntryStore implements OutboxEntryStore
     }
 
     /**
-     * Setzt fehlgeschlagene Einträge auf pending und den Versuchszähler auf 0.
+     * Sets failed entries back to pending and the attempt counter to 0.
      *
-     * @param Uuid|null $id UUID eines einzelnen Eintrags oder null für alle fehlgeschlagenen Einträge
+     * @param Uuid|null $id UUID of a single entry, or null for all failed entries
      *
-     * @return int Anzahl der wieder angestoßenen Einträge
+     * @return int number of entries retried
      */
     public function retryFailed(?Uuid $id = null): int
     {
@@ -101,11 +101,11 @@ final class InMemoryOutboxEntryStore implements OutboxEntryStore
     }
 
     /**
-     * Liefert den Eintrag mit einer UUID.
+     * Returns the entry with a UUID.
      *
-     * @param string $id UUID im Format RFC 4122
+     * @param string $id UUID in RFC 4122 format
      *
-     * @return OutboxEntry|null der Eintrag oder null, wenn er gelöscht oder nie abgelegt wurde
+     * @return OutboxEntry|null the entry, or null if it was deleted or never added
      */
     public function find(string $id): ?OutboxEntry
     {

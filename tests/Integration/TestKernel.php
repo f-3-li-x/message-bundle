@@ -18,8 +18,8 @@ use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 /**
- * Minimale Symfony-Anwendung mit dem Bundle, wie ein Service es einbindet: Doctrine auf SQLite im Speicher,
- * Monolog mit dem AmqpLogHandler, ein Consumer für Löschaufträge.
+ * Minimal Symfony application with the bundle, as a service includes it: Doctrine on in-memory SQLite, Monolog
+ * with the AmqpLogHandler, a consumer for deletion requests.
  */
 final class TestKernel extends Kernel
 {
@@ -29,7 +29,7 @@ final class TestKernel extends Kernel
 
     public const string CENTRAL_EXCHANGE = 'domain-events';
 
-    /** @var list<class-string> Services, die ein Service aus Infrastructure und Api heraus nutzt */
+    /** @var list<class-string> services that a service uses from its infrastructure and interface layers */
     private const array SERVICES_USED_BY_A_SERVICE = [
         OutboxWriter::class,
         OutboxEntryStore::class,
@@ -39,9 +39,9 @@ final class TestKernel extends Kernel
     ];
 
     /**
-     * Liefert die Bundles der Anwendung.
+     * Returns the bundles of the application.
      *
-     * @return iterable<int, \Symfony\Component\HttpKernel\Bundle\BundleInterface> die Bundles
+     * @return iterable<int, \Symfony\Component\HttpKernel\Bundle\BundleInterface> the bundles
      */
     public function registerBundles(): iterable
     {
@@ -52,9 +52,9 @@ final class TestKernel extends Kernel
     }
 
     /**
-     * Liefert das Verzeichnis des Projekts.
+     * Returns the project directory.
      *
-     * @return string das Wurzelverzeichnis des Bundles
+     * @return string the root directory of the bundle
      */
     public function getProjectDir(): string
     {
@@ -62,9 +62,9 @@ final class TestKernel extends Kernel
     }
 
     /**
-     * Liefert das Cache-Verzeichnis.
+     * Returns the cache directory.
      *
-     * @return string Verzeichnis unter var/
+     * @return string directory under var/
      */
     public function getCacheDir(): string
     {
@@ -72,9 +72,9 @@ final class TestKernel extends Kernel
     }
 
     /**
-     * Liefert das Log-Verzeichnis.
+     * Returns the log directory.
      *
-     * @return string Verzeichnis unter var/
+     * @return string directory under var/
      */
     public function getLogDir(): string
     {
@@ -82,9 +82,9 @@ final class TestKernel extends Kernel
     }
 
     /**
-     * Konfiguriert die Anwendung.
+     * Configures the application.
      *
-     * @param ContainerConfigurator $container Konfiguration des Containers
+     * @param ContainerConfigurator $container configuration of the container
      *
      * @return void
      */
@@ -113,7 +113,7 @@ final class TestKernel extends Kernel
             'logging'   => ['redact_fields' => ['firstName']],
         ]);
 
-        // Ein Service nutzt diese Services über Dependency Injection; die Aliase halten sie für die Tests im Container.
+        // A service uses these services via dependency injection; the aliases keep them in the container for tests.
         $services = $container->services();
 
         foreach (self::SERVICES_USED_BY_A_SERVICE as $id) {

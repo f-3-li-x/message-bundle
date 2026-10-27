@@ -9,25 +9,25 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * Konfiguration des Bundles unter dem Schlüssel message. Konfigurierbar ist nur, was sich je Service
- * unterscheidet; Versuche, Wartezeiten, AMQP-Properties und Tabellenschema sind fest.
+ * Configuration of the bundle under the key message. Only what differs per service is configurable; attempts, waiting
+ * times, AMQP properties and table schema are fixed.
  */
 final class Configuration implements ConfigurationInterface
 {
     public const string ROOT = 'message';
 
-    /** @var list<string> Event-Typen, die an den zentralen Exchange gehen, sofern einer konfiguriert ist */
+    /** @var list<string> event types that go to the central exchange, if one is configured */
     public const array DEFAULT_CENTRAL_EVENT_TYPES = ['*.created', '*.updated'];
 
     public const string DEFAULT_COMMAND_NAMESPACE = 'outbox';
 
-    /** Namensraum der Konsolenkommandos: Wörter aus Kleinbuchstaben, Ziffern, - und _, getrennt durch : */
+    /** Namespace of the console commands: words of lower-case letters, digits, - and _, separated by : */
     private const string COMMAND_NAMESPACE_PATTERN = '/^[a-z0-9_-]+(:[a-z0-9_-]+)*$/';
 
     /**
-     * Liefert den Aufbau der Konfiguration.
+     * Returns the structure of the configuration.
      *
-     * @return TreeBuilder der Aufbau unter dem Schlüssel message
+     * @return TreeBuilder the structure under the key message
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
@@ -36,7 +36,7 @@ final class Configuration implements ConfigurationInterface
         $treeBuilder->getRootNode()
             ->children()
                 ->scalarNode('service')
-                    ->info('Name des Service: eigener Exchange, app_id, Routing-Key der Log-Events')
+                    ->info('Name of the service: own exchange, app_id, routing key of the log events')
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
@@ -45,16 +45,16 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->booleanNode('enabled')->defaultTrue()->end()
                         ->scalarNode('central_exchange')
-                            ->info('Zentraler Exchange für die Änderungsereignisse; null: alle Events an den Service')
+                            ->info('Central exchange for change events; null: all events go to the service\'s exchange')
                             ->defaultNull()
                         ->end()
                         ->arrayNode('central_event_types')
-                            ->info('Event-Typen für den zentralen Exchange; * steht für genau ein Wort')
+                            ->info('Event types for the central exchange; * stands for exactly one word')
                             ->scalarPrototype()->end()
                             ->defaultValue(self::DEFAULT_CENTRAL_EVENT_TYPES)
                         ->end()
                         ->scalarNode('command_namespace')
-                            ->info('Namensraum der Kommandos, z. B. outbox für outbox:publish und outbox:retry-failed')
+                            ->info('Namespace of the commands, e.g. outbox for outbox:publish and outbox:retry-failed')
                             ->defaultValue(self::DEFAULT_COMMAND_NAMESPACE)
                             ->validate()
                                 ->ifTrue(static fn (mixed $value): bool => !is_string($value)
@@ -65,7 +65,7 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('consumers')
-                    ->info('Je Eintrag ein Messenger-Transport, der Name ist der Name des Transports')
+                    ->info('One Messenger transport per entry; the key is the name of the transport')
                     ->useAttributeAsKey('name')
                     ->arrayPrototype()
                         ->children()
@@ -78,11 +78,11 @@ final class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->booleanNode('enabled')
-                            ->info('AmqpLogHandler; in der Umgebung test immer abgeschaltet')
+                            ->info('AmqpLogHandler; always disabled in the test environment')
                             ->defaultTrue()
                         ->end()
                         ->arrayNode('redact_fields')
-                            ->info('Felder, deren Werte nicht ins Log gelangen; leer bedeutet ohne Redaction-Processor')
+                            ->info('Fields whose values must not reach the log; empty means no redaction processor')
                             ->scalarPrototype()->end()
                             ->defaultValue([])
                         ->end()

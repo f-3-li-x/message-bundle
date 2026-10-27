@@ -11,19 +11,19 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Konsolenkommando <namensraum>:publish, standardmäßig outbox:publish: ein Lauf des Outbox-Publishers, z. B.
- * stündlich über einen Cron-Lauf. Den Namensraum legt message.outbox.command_namespace fest.
+ * Console command <namespace>:publish, outbox:publish by default: one run of the outbox publisher, e.g. hourly via
+ * cron. The namespace is set by message.outbox.command_namespace.
  */
 final class PublishOutboxCommand extends Command
 {
     public const string DEFAULT_NAME = 'outbox:publish';
 
     /**
-     * Erzeugt das Kommando.
+     * Creates the command.
      *
-     * @param OutboxPublisher $publisher Outbox-Publisher
-     * @param ClockInterface  $clock     Uhr für den Zeitpunkt in der Ausgabe
-     * @param string          $name      Name des Kommandos
+     * @param OutboxPublisher $publisher outbox publisher
+     * @param ClockInterface  $clock     clock for the point in time in the output
+     * @param string          $name      name of the command
      */
     public function __construct(
         private readonly OutboxPublisher $publisher,
@@ -34,7 +34,7 @@ final class PublishOutboxCommand extends Command
     }
 
     /**
-     * Legt die Beschreibung fest.
+     * Sets the description.
      *
      * @return void
      */
@@ -44,13 +44,13 @@ final class PublishOutboxCommand extends Command
     }
 
     /**
-     * Führt einen Lauf des Outbox-Publishers aus und gibt dessen Ergebnis aus.
+     * Runs the outbox publisher once and prints its result.
      *
-     * @param InputInterface  $input  Eingabe der Konsole
-     * @param OutputInterface $output Ausgabe der Konsole
+     * @param InputInterface  $input  console input
+     * @param OutputInterface $output console output
      *
-     * @return int Command::SUCCESS nach einem vollständigen Lauf, Command::FAILURE, wenn der Lauf abgebrochen
-     *             wurde, weil RabbitMQ nicht erreichbar ist
+     * @return int Command::SUCCESS after a complete run, Command::FAILURE if the run was aborted because RabbitMQ is
+     *             unreachable
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

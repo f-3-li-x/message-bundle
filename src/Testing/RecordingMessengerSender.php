@@ -9,20 +9,20 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Sender\SenderInterface;
 
 /**
- * Test-Double für einen Messenger-Transport: zeichnet die gesendeten Umschläge auf oder wirft einen vorgegebenen
- * Fehler, z. B. eine TransportException mit einer AMQPConnectionException als Ursache.
+ * Test double for a Messenger transport: records the sent envelopes or throws a given failure, e.g. a
+ * TransportException caused by an AMQPConnectionException.
  */
 final class RecordingMessengerSender implements SenderInterface
 {
-    /** @var list<Envelope> gesendete Umschläge */
+    /** @var list<Envelope> sent envelopes */
     private array $envelopes = [];
 
     private ?Throwable $failure = null;
 
     /**
-     * Lässt jeden weiteren Versand mit diesem Fehler scheitern.
+     * Makes every further send fail with this failure.
      *
-     * @param Throwable|null $failure Fehler oder null für erfolgreichen Versand
+     * @param Throwable|null $failure failure, or null for successful sending
      *
      * @return void
      */
@@ -32,13 +32,13 @@ final class RecordingMessengerSender implements SenderInterface
     }
 
     /**
-     * Zeichnet den Umschlag auf.
+     * Records the envelope.
      *
-     * @param Envelope $envelope gesendeter Umschlag
+     * @param Envelope $envelope sent envelope
      *
-     * @return Envelope der Umschlag
+     * @return Envelope the envelope
      *
-     * @throws Throwable der vorgegebene Fehler
+     * @throws Throwable the given failure
      */
     public function send(Envelope $envelope): Envelope
     {
@@ -52,9 +52,9 @@ final class RecordingMessengerSender implements SenderInterface
     }
 
     /**
-     * Liefert die gesendeten Umschläge.
+     * Returns the sent envelopes.
      *
-     * @return list<Envelope> die Umschläge in der Reihenfolge des Versands
+     * @return list<Envelope> the envelopes in the order they were sent
      */
     public function envelopes(): array
     {

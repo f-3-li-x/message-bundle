@@ -12,24 +12,24 @@ use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 
 /**
- * Hält sensible Daten aus den Logs: ersetzt in context und extra jedes Log-Eintrags, in beliebiger Tiefe, die
- * Werte der als sensibel eingestuften Felder durch ***REDACTED***, bevor der Eintrag einen Handler erreicht. Wird
- * für alle Channels registriert, sobald message.logging.redact_fields Felder nennt.
+ * Keeps sensitive data out of the logs: replaces the values of the fields classified as sensitive in context and
+ * extra of every log record, at any depth, with ***REDACTED*** before the record reaches a handler. Registered for
+ * all channels as soon as message.logging.redact_fields lists any fields.
  */
 final readonly class SensitiveFieldRedactionProcessor implements ProcessorInterface
 {
     public const string REDACTED = '***REDACTED***';
 
-    /** Tiefe, bis zu der ein Eintrag durchsucht wird; schützt vor Objekten, die aufeinander verweisen */
+    /** Depth up to which a record is searched; guards against objects that refer to each other */
     private const int MAX_DEPTH = 10;
 
-    /** @var array<array-key, true> die sensiblen Felder als Schlüssel */
+    /** @var array<array-key, true> the sensitive fields as keys */
     private array $sensitiveFields;
 
     /**
-     * Erzeugt den Processor.
+     * Creates the processor.
      *
-     * @param list<string> $sensitiveFields Namen der als sensibel eingestuften Felder
+     * @param list<string> $sensitiveFields names of the fields classified as sensitive
      */
     public function __construct(array $sensitiveFields)
     {
@@ -37,11 +37,11 @@ final readonly class SensitiveFieldRedactionProcessor implements ProcessorInterf
     }
 
     /**
-     * Liefert den Eintrag mit ersetzten sensiblen Feldern in context und extra.
+     * Returns the record with the sensitive fields in context and extra replaced.
      *
-     * @param LogRecord $record Log-Eintrag
+     * @param LogRecord $record log record
      *
-     * @return LogRecord der Eintrag ohne sensible Werte
+     * @return LogRecord the record without sensitive values
      */
     public function __invoke(LogRecord $record): LogRecord
     {
@@ -52,12 +52,12 @@ final readonly class SensitiveFieldRedactionProcessor implements ProcessorInterf
     }
 
     /**
-     * Ersetzt den Wert jedes sensiblen Schlüssels und durchsucht die übrigen Werte eine Ebene tiefer.
+     * Replaces the value of every sensitive key and searches the other values one level deeper.
      *
-     * @param array<array-key, mixed> $data  Werte einer Ebene
-     * @param int                     $depth Tiefe im Log-Eintrag; context und extra liegen auf Tiefe 1
+     * @param array<array-key, mixed> $data  values of one level
+     * @param int                     $depth depth in the log record; context and extra are at depth 1
      *
-     * @return array<array-key, mixed> die Werte ohne sensible Werte
+     * @return array<array-key, mixed> the values without sensitive values
      */
     private function redact(array $data, int $depth): array
     {
@@ -71,15 +71,15 @@ final readonly class SensitiveFieldRedactionProcessor implements ProcessorInterf
     }
 
     /**
-     * Durchsucht ein Array oder Objekt nach sensiblen Feldern. Exceptions, Zeitpunkte, Enum-Fälle und Werte, die
-     * weder Array noch Objekt sind, bleiben unverändert; was tiefer als die höchste Tiefe liegt, wird als Ganzes
-     * ersetzt. Ein Objekt wird über das durchsucht, was ein Formatter von ihm schreiben würde (seine
-     * JSON-Darstellung oder seine öffentlichen Eigenschaften), und nur ersetzt, wenn darin ein sensibles Feld liegt.
+     * Searches an array or an object for sensitive fields. Exceptions, points in time, enum cases and values that are
+     * neither array nor object stay unchanged; whatever lies deeper than the maximum depth is replaced as a whole. An
+     * object is searched through what a formatter would write of it (its JSON representation or its public
+     * properties) and replaced only if a sensitive field was found in it.
      *
-     * @param mixed $value Wert
-     * @param int   $depth Tiefe des Werts im Log-Eintrag
+     * @param mixed $value value
+     * @param int   $depth depth of the value in the log record
      *
-     * @return mixed der Wert ohne sensible Werte
+     * @return mixed the value without sensitive values
      */
     private function redactNested(mixed $value, int $depth): mixed
     {

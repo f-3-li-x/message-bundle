@@ -10,23 +10,22 @@ use Doctrine\ORM\EntityManagerInterface;
 use ACAT\MessageBundle\Outbox\Entity\OutboxEntry;
 
 /**
- * Legt Events als ausstehende Einträge in der Tabelle outbox_entries ab. Der Writer schreibt nicht selbst
- * (kein flush): Der Eintrag wird mit der Transaktion des Service geschrieben, in der auch die auslösende
- * Zustandsänderung liegt.
+ * Stores events as pending entries in the table outbox_entries. The writer does not write by itself (no flush): the
+ * entry is written with the service's transaction that also contains the state change that caused it.
  */
 final readonly class OutboxWriter
 {
-    /** Kodierung des Payloads; Schrägstriche und Umlaute bleiben lesbar */
+    /** Encoding of the payload; slashes and non-ASCII characters stay readable */
     private const int JSON_FLAGS = JSON_THROW_ON_ERROR
         | JSON_UNESCAPED_SLASHES
         | JSON_UNESCAPED_UNICODE
         | JSON_PRESERVE_ZERO_FRACTION;
 
     /**
-     * Erzeugt den Writer.
+     * Creates the writer.
      *
-     * @param EntityManagerInterface $entityManager EntityManager von Doctrine, dessen Transaktion schreibt
-     * @param ExchangeResolver       $exchanges     Zuordnung des Exchange je Event
+     * @param EntityManagerInterface $entityManager EntityManager of Doctrine whose transaction writes the entry
+     * @param ExchangeResolver       $exchanges     assignment of the exchange per event
      */
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -35,17 +34,17 @@ final readonly class OutboxWriter
     }
 
     /**
-     * Legt ein Event als ausstehenden Eintrag ab. Der Eintrag erhält eine UUID v7, die zugleich message_id der
-     * Nachricht ist; created_at ist der Zeitpunkt aus dieser UUID. Ein leeres Objekt steht im Payload als
-     * stdClass, da ein leeres Array als [] kodiert würde.
+     * Stores an event as a pending entry. The entry gets a UUID v7 that is also the message_id of the message;
+     * created_at is the point in time from this UUID. An empty object in the payload must be a stdClass, as an empty
+     * array would be encoded as [].
      *
-     * @param string               $eventType   Event-Name, zugleich Routing-Key, z. B. person.updated
-     * @param string               $aggregateId Wert des Feldes id aus dem Payload
-     * @param array<string, mixed> $payload     Payload des Events in der Feldreihenfolge, die beim Empfänger ankommt
+     * @param string               $eventType   event name, also the routing key, e.g. person.updated
+     * @param string               $aggregateId value of the field id in the payload
+     * @param array<string, mixed> $payload     payload of the event in the field order the receiver gets
      *
-     * @return OutboxEntry der abgelegte Eintrag
+     * @return OutboxEntry the stored entry
      *
-     * @throws JsonException wenn sich das Payload nicht als JSON kodieren lässt
+     * @throws JsonException if the payload cannot be encoded as JSON
      */
     public function append(string $eventType, string $aggregateId, array $payload): OutboxEntry
     {

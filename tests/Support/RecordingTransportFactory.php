@@ -9,7 +9,7 @@ use Symfony\Component\Messenger\Transport\TransportFactoryInterface;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 /**
- * Factory, die DSN und Optionen des zuletzt erzeugten Transports aufzeichnet.
+ * Factory that records DSN and options of the most recently created transport.
  *
  * @implements TransportFactoryInterface<TransportInterface>
  */
@@ -21,22 +21,22 @@ final class RecordingTransportFactory implements TransportFactoryInterface
     public ?array $options = null;
 
     /**
-     * Erzeugt die Factory.
+     * Creates the factory.
      *
-     * @param TransportInterface $transport Transport, den die Factory liefert
+     * @param TransportInterface $transport transport the factory returns
      */
     public function __construct(private readonly TransportInterface $transport)
     {
     }
 
     /**
-     * Zeichnet DSN und Optionen auf.
+     * Records DSN and options.
      *
      * @param string               $dsn        DSN
-     * @param array<string, mixed> $options    Optionen
-     * @param SerializerInterface  $serializer Serializer
+     * @param array<string, mixed> $options    options
+     * @param SerializerInterface  $serializer serializer
      *
-     * @return TransportInterface der hinterlegte Transport
+     * @return TransportInterface the given transport
      */
     public function createTransport(string $dsn, array $options, SerializerInterface $serializer): TransportInterface
     {
@@ -47,12 +47,12 @@ final class RecordingTransportFactory implements TransportFactoryInterface
     }
 
     /**
-     * Unterstützt jeden DSN.
+     * Supports every DSN.
      *
      * @param string               $dsn     DSN
-     * @param array<string, mixed> $options Optionen
+     * @param array<string, mixed> $options options
      *
-     * @return bool immer true
+     * @return bool always true
      */
     public function supports(string $dsn, array $options): bool
     {

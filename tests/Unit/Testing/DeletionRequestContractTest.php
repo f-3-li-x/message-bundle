@@ -12,17 +12,17 @@ use ACAT\MessageBundle\Deletion\DeletionRequest;
 use ACAT\MessageBundle\Testing\DeletionRequestContract;
 
 /**
- * Bindet den Vertrag des Löschauftrags an einen minimalen Service im Speicher, der den Vertrag erfüllt; zeigt, wie ein
- * Service den Vertrag einbindet.
+ * Binds the deletion request contract to a minimal in-memory service that fulfils it; shows how a service
+ * includes the contract.
  */
 final class DeletionRequestContractTest extends TestCase
 {
     use DeletionRequestContract;
 
-    /** @var array<string, true> vorhandene Entitäten */
+    /** @var array<string, true> existing entities */
     private array $entities = [];
 
-    /** @var array<string, array{type: string, body: string}> gespeicherte Rückmeldung je ticketId */
+    /** @var array<string, array{type: string, body: string}> stored feedback per ticketId */
     private array $processed = [];
 
     /** @var list<array{type: string, body: string}> */

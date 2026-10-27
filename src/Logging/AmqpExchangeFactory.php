@@ -11,19 +11,19 @@ use AMQPConnection;
 use ACAT\MessageBundle\Connection\RabbitMqConfig;
 
 /**
- * Baut über die Extension amqp die Verbindung zu RabbitMQ auf und liefert den Exchange des Service, an den die
- * Log-Events gehen. Der Exchange wird nicht deklariert; die Topologie am Broker wird außerhalb des Service gepflegt.
+ * Connects to RabbitMQ via the amqp extension and returns the exchange of the service the log events go to. The
+ * exchange is not declared; the broker topology is maintained outside the service.
  */
 final readonly class AmqpExchangeFactory implements AmqpExchangeFactoryInterface
 {
-    /** Zeitlimit für Verbindungsaufbau und Senden in Sekunden, damit ein nicht erreichbarer Broker nichts aufhält */
+    /** Timeout for connecting and sending in seconds, so that an unreachable broker holds nothing up */
     public const float TIMEOUT = 3.0;
 
     /**
-     * Erzeugt die Factory.
+     * Creates the factory.
      *
-     * @param RabbitMqConfig $config       Verbindungsdaten aus RABBITMQ_*
-     * @param string         $exchangeName Name des Exchange für die Log-Events, der Name des Service
+     * @param RabbitMqConfig $config       connection data from RABBITMQ_*
+     * @param string         $exchangeName name of the exchange for the log events, the name of the service
      */
     public function __construct(
         private RabbitMqConfig $config,
@@ -32,12 +32,12 @@ final readonly class AmqpExchangeFactory implements AmqpExchangeFactoryInterface
     }
 
     /**
-     * Baut eine neue Verbindung auf und liefert den Exchange des Service auf einem neuen Kanal. Bei TLS gibt
-     * RabbitMqConfig die CA-Zertifikate mit; ohne sie entstünde keine verschlüsselte Verbindung.
+     * Opens a new connection and returns the exchange of the service on a new channel. With TLS, RabbitMqConfig adds
+     * the CA certificates; without them, no encrypted connection would be established.
      *
-     * @return AMQPExchange der Exchange auf einer offenen Verbindung
+     * @return AMQPExchange the exchange on an open connection
      *
-     * @throws AMQPException wenn die Verbindung nicht aufgebaut werden kann
+     * @throws AMQPException if the connection cannot be established
      */
     public function create(): AMQPExchange
     {

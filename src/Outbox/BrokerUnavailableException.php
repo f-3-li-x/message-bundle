@@ -8,15 +8,15 @@ use Throwable;
 use RuntimeException;
 
 /**
- * RabbitMQ ist nicht erreichbar: Der Verbindungsaufbau ist gescheitert oder die Verbindung ist abgebrochen.
- * Zählt nicht als Zustellversuch; der Lauf des Outbox-Publishers bricht ab.
+ * RabbitMQ is unreachable: connecting failed or the connection broke. Does not count as a delivery attempt; the
+ * run of the outbox publisher aborts.
  */
 final class BrokerUnavailableException extends RuntimeException
 {
     /**
-     * Erzeugt die Exception.
+     * Creates the exception.
      *
-     * @param Throwable|null $previous auslösender technischer Fehler
+     * @param Throwable|null $previous technical failure that caused it
      */
     public function __construct(?Throwable $previous = null)
     {

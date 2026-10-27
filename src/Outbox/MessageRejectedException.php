@@ -8,15 +8,15 @@ use Throwable;
 use RuntimeException;
 
 /**
- * Der Broker hat eine einzelne Nachricht abgelehnt oder nicht bestätigt (Publisher Confirms). Zählt als
- * Zustellversuch des Outbox-Eintrags.
+ * The broker rejected a single message or did not confirm it (publisher confirms). Counts as a delivery attempt
+ * of the outbox entry.
  */
 final class MessageRejectedException extends RuntimeException
 {
     /**
-     * Erzeugt die Exception.
+     * Creates the exception.
      *
-     * @param Throwable|null $previous auslösender technischer Fehler
+     * @param Throwable|null $previous technical failure that caused it
      */
     public function __construct(?Throwable $previous = null)
     {

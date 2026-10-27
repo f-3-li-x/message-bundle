@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ACAT\MessageBundle\Outbox\Entity;
 
 /**
- * Status eines Outbox-Eintrags: ausstehend oder nach zehn gezählten Fehlversuchen fehlgeschlagen.
+ * Status of an outbox entry: pending, or failed after ten counted failed attempts.
  */
 enum OutboxStatus: string
 {

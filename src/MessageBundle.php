@@ -7,8 +7,8 @@ namespace ACAT\MessageBundle;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * Messaging-Infrastruktur für Symfony-Microservices: Transactional Outbox, Anbindung an RabbitMQ, Retry beim
- * Konsum, Löschaufträge und Logging über AMQP.
+ * Messaging infrastructure for Symfony microservices: transactional outbox, RabbitMQ connection, retries when
+ * consuming, deletion requests and logging over AMQP.
  */
 final class MessageBundle extends Bundle
 {
