@@ -72,7 +72,7 @@ final readonly class RetryingExecutor
             } catch (Throwable $failure) {
                 if ($attempt >= $this->maxAttempts) {
                     throw new UnrecoverableMessageHandlingException(
-                        sprintf('Die Verarbeitung ist nach %d Versuchen endgültig fehlgeschlagen.', $attempt),
+                        sprintf('Processing failed for good after %d attempts.', $attempt),
                         0,
                         $failure,
                     );
@@ -97,8 +97,8 @@ final readonly class RetryingExecutor
         $waitSeconds = self::WAIT_SECONDS[$attempt - 1];
 
         $this->logger->warning(
-            'Verarbeitung einer konsumierten Nachricht fehlgeschlagen (Versuch {attempt} von {maxAttempts});'
-            . ' erneuter Versuch in {waitSeconds} s.',
+            'Processing of a consumed message failed (attempt {attempt} of {maxAttempts});'
+            . ' retrying in {waitSeconds} s.',
             $context + [
                 'attempt'     => $attempt,
                 'maxAttempts' => $this->maxAttempts,

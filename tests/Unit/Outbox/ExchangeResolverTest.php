@@ -16,12 +16,12 @@ final class ExchangeResolverTest extends TestCase
      */
     public static function eventTypesAndExchanges(): iterable
     {
-        yield 'created an domain-events' => ['person.created', 'domain-events'];
-        yield 'updated an domain-events' => ['person.updated', 'domain-events'];
-        yield 'deleted an den Service' => ['person.deleted', 'person-service'];
-        yield 'deletion.failed an den Service' => ['person.deletion.failed', 'person-service'];
-        yield 'deletion.processed an den Service' => ['organisation.deletion.processed', 'person-service'];
-        yield '* deckt genau ein Wort' => ['person.contact.created', 'person-service'];
+        yield 'created to domain-events' => ['person.created', 'domain-events'];
+        yield 'updated to domain-events' => ['person.updated', 'domain-events'];
+        yield 'deleted to the service' => ['person.deleted', 'person-service'];
+        yield 'deletion.failed to the service' => ['person.deletion.failed', 'person-service'];
+        yield 'deletion.processed to the service' => ['organisation.deletion.processed', 'person-service'];
+        yield '* matches exactly one word' => ['person.contact.created', 'person-service'];
     }
 
     #[DataProvider('eventTypesAndExchanges')]

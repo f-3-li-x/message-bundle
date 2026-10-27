@@ -66,7 +66,7 @@ trait DeletionRequestContract
         $this->handleDeletionRequest(new DeletionRequest($id, $ticketId));
 
         $feedback = $this->deletionFeedbackFor($ticketId);
-        Assert::assertCount(1, $feedback, 'Es entsteht genau eine Rückmeldung.');
+        Assert::assertCount(1, $feedback, 'Exactly one feedback is created.');
         Assert::assertSame($this->deletionEntityName() . '.deleted', $feedback[0]['type']);
         Assert::assertSame($id, self::assertDeletedEvent($feedback[0]['body'])['id']);
         $this->assertEntityDeleted($id);
@@ -86,9 +86,9 @@ trait DeletionRequestContract
     {
         $ticketId = self::contractTicketId();
 
-        $this->handleDeletionRequest(new DeletionRequest('keine-uuid-v7', $ticketId));
+        $this->handleDeletionRequest(new DeletionRequest('not-a-uuid-v7', $ticketId));
 
-        $this->assertNotFoundReported($ticketId, 'keine-uuid-v7');
+        $this->assertNotFoundReported($ticketId, 'not-a-uuid-v7');
     }
 
     public function testRepeatedDeletionRequestRepublishesTheOriginalFeedback(): void
@@ -100,9 +100,9 @@ trait DeletionRequestContract
         $this->handleDeletionRequest(new DeletionRequest($id, $ticketId));
 
         $feedback = $this->deletionFeedbackFor($ticketId);
-        Assert::assertCount(2, $feedback, 'Der wiederholte Auftrag wird erneut zurückgemeldet.');
+        Assert::assertCount(2, $feedback, 'The repeated request is reported again.');
         Assert::assertSame($this->deletionEntityName() . '.deleted', $feedback[1]['type']);
-        Assert::assertSame($feedback[0]['body'], $feedback[1]['body'], 'Die erneute Rückmeldung gleicht der ersten.');
+        Assert::assertSame($feedback[0]['body'], $feedback[1]['body'], 'The repeated feedback equals the first one.');
     }
 
     public function testRepeatedDeletionRequestForUnknownIdRepublishesNotFound(): void
@@ -114,9 +114,9 @@ trait DeletionRequestContract
         $this->handleDeletionRequest(new DeletionRequest($id, $ticketId));
 
         $feedback = $this->deletionFeedbackFor($ticketId);
-        Assert::assertCount(2, $feedback, 'Der wiederholte Auftrag wird erneut zurückgemeldet.');
+        Assert::assertCount(2, $feedback, 'The repeated request is reported again.');
         Assert::assertSame($this->deletionEntityName() . '.deletion.failed', $feedback[1]['type']);
-        Assert::assertSame($feedback[0]['body'], $feedback[1]['body'], 'Die erneute Rückmeldung gleicht der ersten.');
+        Assert::assertSame($feedback[0]['body'], $feedback[1]['body'], 'The repeated feedback equals the first one.');
     }
 
     /**
@@ -130,7 +130,7 @@ trait DeletionRequestContract
     private function assertNotFoundReported(string $ticketId, string $id): void
     {
         $feedback = $this->deletionFeedbackFor($ticketId);
-        Assert::assertCount(1, $feedback, 'Es entsteht genau eine Rückmeldung.');
+        Assert::assertCount(1, $feedback, 'Exactly one feedback is created.');
         Assert::assertSame($this->deletionEntityName() . '.deletion.failed', $feedback[0]['type']);
 
         $payload = self::assertDeletionFailedEvent($feedback[0]['body']);

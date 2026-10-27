@@ -43,7 +43,7 @@ final class SensitiveFieldRedactionProcessorTest extends TestCase
         $serializable = new class implements JsonSerializable {
             public function jsonSerialize(): mixed
             {
-                return ['value' => 'geheim'];
+                return ['value' => 'secret'];
             }
         };
 
@@ -56,7 +56,7 @@ final class SensitiveFieldRedactionProcessorTest extends TestCase
 
     public function testKeepsExceptionsTimesAndObjectsWithoutSensitiveFields(): void
     {
-        $exception = new RuntimeException('Fehler');
+        $exception = new RuntimeException('failure');
         $time = new DateTimeImmutable();
         $object = new stdClass();
         $object->id = 'x';
@@ -74,6 +74,6 @@ final class SensitiveFieldRedactionProcessorTest extends TestCase
      */
     private static function record(array $context, array $extra = []): LogRecord
     {
-        return new LogRecord(new DateTimeImmutable(), 'app', Level::Info, 'Eintrag', $context, $extra);
+        return new LogRecord(new DateTimeImmutable(), 'app', Level::Info, 'entry', $context, $extra);
     }
 }

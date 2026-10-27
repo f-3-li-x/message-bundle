@@ -27,7 +27,7 @@ final class OutboxCommandsTest extends TestCase
         $tester = $this->publishCommand($store, new ScriptedOutboxSender());
 
         self::assertSame(Command::SUCCESS, $tester->execute([]));
-        self::assertStringContainsString('1 zugestellt, 0 abgelehnt, 0 übersprungen', $tester->getDisplay());
+        self::assertStringContainsString('1 delivered, 0 rejected, 0 skipped', $tester->getDisplay());
     }
 
     public function testPublishFailsWhenTheBrokerIsUnavailable(): void
@@ -37,7 +37,7 @@ final class OutboxCommandsTest extends TestCase
         $tester = $this->publishCommand(new InMemoryOutboxEntryStore(OutboxEntries::pending(self::FIRST)), $sender);
 
         self::assertSame(Command::FAILURE, $tester->execute([]));
-        self::assertStringContainsString('RabbitMQ ist nicht erreichbar', $tester->getDisplay());
+        self::assertStringContainsString('RabbitMQ is unreachable', $tester->getDisplay());
     }
 
     public function testRetryFailedResetsAllFailedEntries(): void
@@ -46,7 +46,7 @@ final class OutboxCommandsTest extends TestCase
         $tester = new CommandTester(new RetryFailedOutboxCommand($store));
 
         self::assertSame(Command::SUCCESS, $tester->execute([]));
-        self::assertStringContainsString('Auf pending gesetzte Outbox-Einträge: 2', $tester->getDisplay());
+        self::assertStringContainsString('Outbox entries set to pending: 2', $tester->getDisplay());
         self::assertFalse($store->find(self::FIRST)?->isFailed());
         self::assertSame(0, $store->find(self::SECOND)?->getAttempts());
     }
@@ -65,8 +65,8 @@ final class OutboxCommandsTest extends TestCase
     {
         $tester = new CommandTester(new RetryFailedOutboxCommand(new InMemoryOutboxEntryStore()));
 
-        self::assertSame(Command::FAILURE, $tester->execute(['id' => 'keine-uuid']));
-        self::assertStringContainsString('keine UUID', $tester->getDisplay());
+        self::assertSame(Command::FAILURE, $tester->execute(['id' => 'not-a-uuid']));
+        self::assertStringContainsString('not a UUID', $tester->getDisplay());
     }
 
     public function testRetryFailedFailsForAnIdWithoutFailedEntry(): void

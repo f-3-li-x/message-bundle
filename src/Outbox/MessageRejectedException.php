@@ -20,6 +20,6 @@ final class MessageRejectedException extends RuntimeException
      */
     public function __construct(?Throwable $previous = null)
     {
-        parent::__construct('Der Broker hat die Nachricht abgelehnt oder nicht bestätigt.', 0, $previous);
+        parent::__construct('The broker rejected the message or did not confirm it.', 0, $previous);
     }
 }

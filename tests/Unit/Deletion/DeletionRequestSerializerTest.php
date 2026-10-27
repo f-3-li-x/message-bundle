@@ -29,11 +29,11 @@ final class DeletionRequestSerializerTest extends TestCase
     public function testPassesAnIdThatIsNoUuidOn(): void
     {
         $message = (new DeletionRequestSerializer())
-            ->decode(['body' => '{"id":"keine-uuid","ticketId":"ret-1"}'])
+            ->decode(['body' => '{"id":"not-a-uuid","ticketId":"ret-1"}'])
             ->getMessage();
 
         self::assertInstanceOf(DeletionRequest::class, $message);
-        self::assertSame('keine-uuid', $message->id);
+        self::assertSame('not-a-uuid', $message->id);
     }
 
     /**
@@ -41,16 +41,16 @@ final class DeletionRequestSerializerTest extends TestCase
      */
     public static function structurallyInvalidBodies(): iterable
     {
-        yield 'leer' => ['', 'Das Payload ist leer.'];
-        yield 'nur Leerraum' => [" \n\t", 'Das Payload ist leer.'];
-        yield 'kein JSON' => ['{id:', 'Das Payload ist kein gültiges JSON.'];
-        yield 'Liste statt Objekt' => ['["id"]', 'Das Payload ist kein JSON-Objekt.'];
-        yield 'id fehlt' => ['{"ticketId":"ret-1"}', 'Das Feld "id" fehlt.'];
-        yield 'ticketId kein String' => ['{"id":"x","ticketId":1}', 'Das Feld "ticketId" ist kein String.'];
-        yield 'id leer' => ['{"id":"","ticketId":"ret-1"}', 'Das Feld "id" ist leer.'];
-        yield 'ticketId zu lang' => [
+        yield 'empty' => ['', 'The payload is empty.'];
+        yield 'whitespace only' => [" \n\t", 'The payload is empty.'];
+        yield 'not JSON' => ['{id:', 'The payload is not valid JSON.'];
+        yield 'list instead of object' => ['["id"]', 'The payload is not a JSON object.'];
+        yield 'id missing' => ['{"ticketId":"ret-1"}', 'The field "id" is missing.'];
+        yield 'ticketId not a string' => ['{"id":"x","ticketId":1}', 'The field "ticketId" is not a string.'];
+        yield 'id empty' => ['{"id":"","ticketId":"ret-1"}', 'The field "id" is empty.'];
+        yield 'ticketId too long' => [
             sprintf('{"id":"x","ticketId":"%s"}', str_repeat('ä', 256)),
-            'Das Feld "ticketId" ist länger als 255 Zeichen.',
+            'The field "ticketId" is longer than 255 characters.',
         ];
     }
 
@@ -60,7 +60,7 @@ final class DeletionRequestSerializerTest extends TestCase
         $message = (new DeletionRequestSerializer())->decode(['body' => $body])->getMessage();
 
         self::assertInstanceOf(MessageDecodingFailedException::class, $message);
-        self::assertSame('Strukturell ungültiger Löschauftrag: ' . $reason, $message->getMessage());
+        self::assertSame('Structurally invalid deletion request: ' . $reason, $message->getMessage());
     }
 
     public function testEncodesARequest(): void

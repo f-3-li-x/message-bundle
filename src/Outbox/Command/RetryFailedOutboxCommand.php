@@ -42,11 +42,11 @@ final class RetryFailedOutboxCommand extends Command
      */
     protected function configure(): void
     {
-        $this->setDescription('Setzt fehlgeschlagene Outbox-Einträge auf pending und den Versuchszähler auf 0.');
+        $this->setDescription('Sets failed outbox entries back to pending and the attempt counter to 0.');
         $this->addArgument(
             self::ARGUMENT_ID,
             InputArgument::OPTIONAL,
-            'UUID eines einzelnen Outbox-Eintrags; ohne Angabe werden alle fehlgeschlagenen Einträge angestoßen',
+            'UUID of a single outbox entry; without it, all failed entries are retried',
         );
     }
 
@@ -66,7 +66,7 @@ final class RetryFailedOutboxCommand extends Command
 
         if ($argument !== null) {
             if (!is_string($argument) || !Uuid::isValid($argument)) {
-                $output->writeln('Das Argument id ist keine UUID.');
+                $output->writeln('The argument id is not a UUID.');
 
                 return Command::FAILURE;
             }
@@ -77,12 +77,12 @@ final class RetryFailedOutboxCommand extends Command
         $count = $this->entries->retryFailed($id);
 
         if ($id !== null && $count === 0) {
-            $output->writeln('Es gibt keinen Outbox-Eintrag mit dieser id und dem Status failed.');
+            $output->writeln('There is no outbox entry with this id and the status failed.');
 
             return Command::FAILURE;
         }
 
-        $output->writeln(sprintf('Auf pending gesetzte Outbox-Einträge: %d', $count));
+        $output->writeln(sprintf('Outbox entries set to pending: %d', $count));
 
         return Command::SUCCESS;
     }

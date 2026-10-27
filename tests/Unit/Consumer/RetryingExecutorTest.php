@@ -50,7 +50,7 @@ final class RetryingExecutorTest extends TestCase
 
         $this->executor(10)->run(static function () use (&$calls): void {
             if (++$calls < 4) {
-                throw new RuntimeException('Datenbank nicht erreichbar');
+                throw new RuntimeException('database unreachable');
             }
         }, ['ticketId' => 'ret-1']);
 
@@ -69,9 +69,9 @@ final class RetryingExecutorTest extends TestCase
             $this->executor(10)->run(static function () use (&$calls): void {
                 ++$calls;
 
-                throw new RuntimeException('Datenbank nicht erreichbar');
+                throw new RuntimeException('database unreachable');
             });
-            self::fail('Die Verarbeitung hätte endgültig scheitern müssen.');
+            self::fail('Processing should have failed for good.');
         } catch (UnrecoverableMessageHandlingException $exception) {
             self::assertInstanceOf(RuntimeException::class, $exception->getPrevious());
         }
@@ -85,11 +85,11 @@ final class RetryingExecutorTest extends TestCase
      */
     public static function configuredAndEffectiveAttempts(): iterable
     {
-        yield 'unter 1' => [0, 1];
+        yield 'below 1' => [0, 1];
         yield '1' => [1, 1];
         yield '5' => [5, 5];
         yield '10' => [10, 10];
-        yield 'über 10' => [25, 10];
+        yield 'above 10' => [25, 10];
     }
 
     #[DataProvider('configuredAndEffectiveAttempts')]

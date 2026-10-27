@@ -20,6 +20,6 @@ final class BrokerUnavailableException extends RuntimeException
      */
     public function __construct(?Throwable $previous = null)
     {
-        parent::__construct('RabbitMQ ist nicht erreichbar.', 0, $previous);
+        parent::__construct('RabbitMQ is unreachable.', 0, $previous);
     }
 }

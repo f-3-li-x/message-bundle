@@ -60,7 +60,7 @@ final readonly class OutboxPublisher
                 $this->sender->send($entry);
             } catch (BrokerUnavailableException $exception) {
                 $this->logger->error(
-                    'Outbox-Lauf abgebrochen: RabbitMQ ist nicht erreichbar.',
+                    'Outbox run aborted: RabbitMQ is unreachable.',
                     self::context($entry) + ['exception' => $exception],
                 );
 
@@ -115,14 +115,14 @@ final readonly class OutboxPublisher
 
         if ($entry->isFailed()) {
             $this->logger->error(
-                'Outbox-Eintrag nach {attempts} abgelehnten Zustellversuchen auf failed gesetzt; er wird nicht '
-                . 'weiter zugestellt.',
+                'Outbox entry set to failed after {attempts} rejected delivery attempts; it will not be delivered '
+                . 'any more.',
                 $context,
             );
 
             return;
         }
 
-        $this->logger->warning('Outbox-Eintrag nicht zugestellt: Zustellversuch {attempts} abgelehnt.', $context);
+        $this->logger->warning('Outbox entry not delivered: delivery attempt {attempts} rejected.', $context);
     }
 }

@@ -59,7 +59,7 @@ final class Configuration implements ConfigurationInterface
                             ->validate()
                                 ->ifTrue(static fn (mixed $value): bool => !is_string($value)
                                     || preg_match(self::COMMAND_NAMESPACE_PATTERN, $value) !== 1)
-                                ->thenInvalid('Der Namensraum %s der Kommandos ist ungültig.')
+                                ->thenInvalid('The command namespace %s is invalid.')
                             ->end()
                         ->end()
                     ->end()

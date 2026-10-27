@@ -16,7 +16,7 @@ final class EventFormatAssertionsTest extends TestCase
     private const string UPDATED = <<<'JSON'
         {"id":"018f2c3a-9a1b-7d2e-8f3a-1b2c3d4e5f6a","actorId":"f47c1c2e","timestamp":"2026-07-21T10:20:00.000Z",
         "delta":[
-          {"field":"name","operation":"changed","oldValue":"Alt","newValue":"Neu"},
+          {"field":"name","operation":"changed","oldValue":"Old","newValue":"New"},
           {"field":"firstName","operation":"changed","masked":true},
           {"field":"contacts[b2e1]","operation":"removed","oldValue":{"contactType":"phone"},"newValue":null,"masked":true},
           {"field":"address","operation":"added","oldValue":null,"newValue":{}}
@@ -41,34 +41,34 @@ final class EventFormatAssertionsTest extends TestCase
      */
     public static function invalidEvents(): iterable
     {
-        yield 'actorId nicht direkt nach id' => [
+        yield 'actorId not right after id' => [
             'created',
             '{"actorId":"a","id":"x","timestamp":"2026-07-21T10:00:00.000Z"}',
         ];
-        yield 'Timestamp mit Offset' => ['created', '{"id":"x","actorId":"a","timestamp":"2026-07-21T10:00:00+00:00"}'];
-        yield 'Timestamp ohne Millisekunden' => ['created', '{"id":"x","actorId":"a","timestamp":"2026-07-21T10:00:00Z"}'];
-        yield 'leeres delta' => ['updated', '{"id":"x","actorId":"a","timestamp":"2026-07-21T10:00:00.000Z","delta":[]}'];
-        yield 'maskierter Eintrag mit Werten' => [
+        yield 'timestamp with offset' => ['created', '{"id":"x","actorId":"a","timestamp":"2026-07-21T10:00:00+00:00"}'];
+        yield 'timestamp without milliseconds' => ['created', '{"id":"x","actorId":"a","timestamp":"2026-07-21T10:00:00Z"}'];
+        yield 'empty delta' => ['updated', '{"id":"x","actorId":"a","timestamp":"2026-07-21T10:00:00.000Z","delta":[]}'];
+        yield 'masked entry with values' => [
             'updated',
             '{"id":"x","actorId":"a","timestamp":"2026-07-21T10:00:00.000Z","delta":[{"field":"f","operation":"changed",'
             . '"oldValue":"a","newValue":"b","masked":true}]}',
         ];
-        yield 'added mit oldValue' => [
+        yield 'added with oldValue' => [
             'updated',
             '{"id":"x","actorId":"a","timestamp":"2026-07-21T10:00:00.000Z","delta":[{"field":"f","operation":"added",'
             . '"oldValue":"a","newValue":"b"}]}',
         ];
-        yield 'unbekannte operation' => [
+        yield 'unknown operation' => [
             'updated',
             '{"id":"x","actorId":"a","timestamp":"2026-07-21T10:00:00.000Z","delta":[{"field":"f","operation":"set",'
             . '"oldValue":"a","newValue":"b"}]}',
         ];
-        yield 'deleted mit actorId' => [
+        yield 'deleted with actorId' => [
             'deleted',
             '{"id":"x","actorId":"a","timestamp":"2026-07-21T10:00:00.000Z","ticketId":"ret-1"}',
         ];
-        yield 'deletion.failed ohne timestamp' => ['failed', '{"id":"x","ticketId":"ret-1","reason":"not_found"}'];
-        yield 'kein JSON' => ['created', '{'];
+        yield 'deletion.failed without timestamp' => ['failed', '{"id":"x","ticketId":"ret-1","reason":"not_found"}'];
+        yield 'not JSON' => ['created', '{'];
     }
 
     #[DataProvider('invalidEvents')]

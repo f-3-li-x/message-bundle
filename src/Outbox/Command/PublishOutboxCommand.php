@@ -40,7 +40,7 @@ final class PublishOutboxCommand extends Command
      */
     protected function configure(): void
     {
-        $this->setDescription('Stellt die ausstehenden Outbox-Einträge an RabbitMQ zu.');
+        $this->setDescription('Delivers the pending outbox entries to RabbitMQ.');
     }
 
     /**
@@ -57,7 +57,7 @@ final class PublishOutboxCommand extends Command
         $result = $this->publisher->publish();
 
         $output->writeln(sprintf(
-            '%s Outbox-Lauf: %d zugestellt, %d abgelehnt, %d übersprungen.',
+            '%s Outbox run: %d delivered, %d rejected, %d skipped.',
             $this->clock->now()->format('c'),
             $result->delivered,
             $result->rejected,
@@ -65,7 +65,7 @@ final class PublishOutboxCommand extends Command
         ));
 
         if ($result->aborted) {
-            $output->writeln('Lauf abgebrochen: RabbitMQ ist nicht erreichbar. Die Versuchszähler sind unverändert.');
+            $output->writeln('Run aborted: RabbitMQ is unreachable. The attempt counters are unchanged.');
 
             return Command::FAILURE;
         }

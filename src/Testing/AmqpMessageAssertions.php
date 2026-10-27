@@ -31,17 +31,17 @@ trait AmqpMessageAssertions
         Assert::assertEqualsCanonicalizing(
             ['message_id', 'type', 'app_id', 'content_type', 'timestamp', 'delivery_mode'],
             array_keys($attributes),
-            'AMQP-Properties',
+            'AMQP properties',
         );
 
         $messageId = $attributes['message_id'];
-        Assert::assertIsString($messageId, 'message_id ist kein String.');
-        Assert::assertTrue(Uuid::isValid($messageId), 'message_id ist keine UUID.');
-        Assert::assertInstanceOf(UuidV7::class, Uuid::fromString($messageId), 'message_id ist keine UUID v7.');
+        Assert::assertIsString($messageId, 'message_id is not a string.');
+        Assert::assertTrue(Uuid::isValid($messageId), 'message_id is not a UUID.');
+        Assert::assertInstanceOf(UuidV7::class, Uuid::fromString($messageId), 'message_id is not a UUID v7.');
         Assert::assertSame($type, $attributes['type'], 'type');
         Assert::assertSame($appId, $attributes['app_id'], 'app_id');
         Assert::assertSame(AmqpProperties::CONTENT_TYPE, $attributes['content_type'], 'content_type');
-        Assert::assertIsInt($attributes['timestamp'], 'timestamp ist keine Unix-Zeit in Sekunden.');
+        Assert::assertIsInt($attributes['timestamp'], 'timestamp is not a Unix time in seconds.');
         Assert::assertSame(AmqpProperties::DELIVERY_MODE_PERSISTENT, $attributes['delivery_mode'], 'delivery_mode');
     }
 
@@ -57,12 +57,12 @@ trait AmqpMessageAssertions
     public static function assertPublishedEvent(Envelope $envelope, string $type, string $appId): string
     {
         $stamp = $envelope->last(AmqpStamp::class);
-        Assert::assertInstanceOf(AmqpStamp::class, $stamp, 'Der Umschlag trägt keinen AmqpStamp.');
-        Assert::assertSame($type, $stamp->getRoutingKey(), 'Routing-Key');
+        Assert::assertInstanceOf(AmqpStamp::class, $stamp, 'The envelope carries no AmqpStamp.');
+        Assert::assertSame($type, $stamp->getRoutingKey(), 'Routing key');
         self::assertAmqpProperties($stamp->getAttributes(), $type, $appId);
 
         $message = $envelope->getMessage();
-        Assert::assertInstanceOf(RawMessage::class, $message, 'Die Nachricht trägt nicht den Body des Events.');
+        Assert::assertInstanceOf(RawMessage::class, $message, 'The message does not carry the body of the event.');
 
         return $message->body;
     }
@@ -76,7 +76,7 @@ trait AmqpMessageAssertions
      */
     public static function assertEncodedWithoutHeaders(array $encodedEnvelope): void
     {
-        Assert::assertSame([], $encodedEnvelope['headers'] ?? [], 'Die Nachricht trägt Header.');
-        Assert::assertIsString($encodedEnvelope['body'] ?? null, 'Die Nachricht hat keinen Body.');
+        Assert::assertSame([], $encodedEnvelope['headers'] ?? [], 'The message carries headers.');
+        Assert::assertIsString($encodedEnvelope['body'] ?? null, 'The message has no body.');
     }
 }

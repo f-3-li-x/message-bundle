@@ -40,7 +40,7 @@ final class ScriptedAmqpExchangeFactory implements AmqpExchangeFactoryInterface
     public function create(): AMQPExchange
     {
         if ($this->results === []) {
-            throw new LogicException('Für den Verbindungsaufbau ist kein Ergebnis hinterlegt.');
+            throw new LogicException('No result is set for the connection attempt.');
         }
 
         $result = $this->results[min($this->connectionAttempts, count($this->results) - 1)];

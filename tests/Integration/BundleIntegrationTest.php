@@ -77,7 +77,7 @@ final class BundleIntegrationTest extends KernelTestCase
         $tester = new CommandTester((new Application($kernel))->find('outbox:publish'));
 
         self::assertSame(0, $tester->execute([]));
-        self::assertStringContainsString('2 zugestellt', $tester->getDisplay());
+        self::assertStringContainsString('2 delivered', $tester->getDisplay());
 
         $central = self::transport('messenger.transport.domain_events')->getSent();
         $service = self::transport('messenger.transport.test_service')->getSent();

@@ -41,7 +41,7 @@ final readonly class BodySerializer implements SerializerInterface
 
         if (!$message instanceof RawMessage) {
             throw new LogicException(
-                sprintf('Über diesen Transport gehen nur Nachrichten der Klasse %s.', RawMessage::class),
+                sprintf('Only messages of the class %s go through this transport.', RawMessage::class),
             );
         }
 

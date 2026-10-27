@@ -55,7 +55,7 @@ final readonly class MessengerOutboxSender implements OutboxSender
     public function send(OutboxEntry $entry): void
     {
         $sender = $this->senders[$entry->getExchange()] ?? throw new LogicException(
-            sprintf('Für den Exchange "%s" ist kein Transport eingerichtet.', $entry->getExchange()),
+            sprintf('No transport is set up for the exchange "%s".', $entry->getExchange()),
         );
         $stamp = new AmqpStamp($entry->getEventType(), AMQP_NOPARAM, AmqpProperties::of(
             $entry->getId()->toRfc4122(),

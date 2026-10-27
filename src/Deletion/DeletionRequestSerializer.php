@@ -21,7 +21,7 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 final readonly class DeletionRequestSerializer implements SerializerInterface
 {
     private const int MAX_LENGTH = 255;
-    private const string REJECTION_PREFIX = 'Strukturell ungültiger Löschauftrag: ';
+    private const string REJECTION_PREFIX = 'Structurally invalid deletion request: ';
     private const string JSON_WHITESPACE = " \t\n\r";
 
     /**
@@ -71,7 +71,7 @@ final readonly class DeletionRequestSerializer implements SerializerInterface
         }
 
         if (!$message instanceof DeletionRequest) {
-            throw new LogicException(sprintf('Der Serializer kodiert ausschließlich %s.', DeletionRequest::class));
+            throw new LogicException(sprintf('The serializer encodes %s only.', DeletionRequest::class));
         }
 
         return [
@@ -92,17 +92,17 @@ final readonly class DeletionRequestSerializer implements SerializerInterface
     private static function decodeJsonObject(string $body): array
     {
         if (trim($body, self::JSON_WHITESPACE) === '') {
-            throw new UnexpectedValueException('Das Payload ist leer.');
+            throw new UnexpectedValueException('The payload is empty.');
         }
 
         try {
             $payload = json_decode($body, false, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
-            throw new UnexpectedValueException('Das Payload ist kein gültiges JSON.');
+            throw new UnexpectedValueException('The payload is not valid JSON.');
         }
 
         if (!$payload instanceof stdClass) {
-            throw new UnexpectedValueException('Das Payload ist kein JSON-Objekt.');
+            throw new UnexpectedValueException('The payload is not a JSON object.');
         }
 
         return get_object_vars($payload);
@@ -121,22 +121,22 @@ final readonly class DeletionRequestSerializer implements SerializerInterface
     private static function readField(array $payload, string $field): string
     {
         if (!array_key_exists($field, $payload)) {
-            throw new UnexpectedValueException(sprintf('Das Feld "%s" fehlt.', $field));
+            throw new UnexpectedValueException(sprintf('The field "%s" is missing.', $field));
         }
 
         $value = $payload[$field];
 
         if (!is_string($value)) {
-            throw new UnexpectedValueException(sprintf('Das Feld "%s" ist kein String.', $field));
+            throw new UnexpectedValueException(sprintf('The field "%s" is not a string.', $field));
         }
 
         if ($value === '') {
-            throw new UnexpectedValueException(sprintf('Das Feld "%s" ist leer.', $field));
+            throw new UnexpectedValueException(sprintf('The field "%s" is empty.', $field));
         }
 
         if (mb_strlen($value, 'UTF-8') > self::MAX_LENGTH) {
             throw new UnexpectedValueException(
-                sprintf('Das Feld "%s" ist länger als %d Zeichen.', $field, self::MAX_LENGTH),
+                sprintf('The field "%s" is longer than %d characters.', $field, self::MAX_LENGTH),
             );
         }
 

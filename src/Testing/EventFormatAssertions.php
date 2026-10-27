@@ -26,11 +26,11 @@ trait EventFormatAssertions
      */
     public static function assertEventTimestamp(mixed $value, string $field = 'timestamp'): void
     {
-        Assert::assertIsString($value, sprintf('%s ist kein String.', $field));
+        Assert::assertIsString($value, sprintf('%s is not a string.', $field));
         Assert::assertMatchesRegularExpression(
             self::TIMESTAMP_PATTERN,
             $value,
-            sprintf('%s ist nicht im Format YYYY-MM-DDTHH:mm:ss.SSSZ.', $field),
+            sprintf('%s is not in the format YYYY-MM-DDTHH:mm:ss.SSSZ.', $field),
         );
     }
 
@@ -45,7 +45,7 @@ trait EventFormatAssertions
     {
         $payload = self::decodeEventBody($body);
 
-        Assert::assertSame(['id', 'actorId', 'timestamp'], array_keys($payload), 'Felder von created');
+        Assert::assertSame(['id', 'actorId', 'timestamp'], array_keys($payload), 'Fields of created');
         self::assertNonEmptyString($payload['id'], 'id');
         self::assertNonEmptyString($payload['actorId'], 'actorId');
         self::assertEventTimestamp($payload['timestamp']);
@@ -65,12 +65,12 @@ trait EventFormatAssertions
     {
         $payload = self::decodeEventBody($body);
 
-        Assert::assertSame(['id', 'actorId', 'timestamp', 'delta'], array_keys($payload), 'Felder von updated');
+        Assert::assertSame(['id', 'actorId', 'timestamp', 'delta'], array_keys($payload), 'Fields of updated');
         self::assertNonEmptyString($payload['id'], 'id');
         self::assertNonEmptyString($payload['actorId'], 'actorId');
         self::assertEventTimestamp($payload['timestamp']);
-        Assert::assertIsList($payload['delta'], 'delta ist keine Liste.');
-        Assert::assertNotEmpty($payload['delta'], 'delta ist leer.');
+        Assert::assertIsList($payload['delta'], 'delta is not a list.');
+        Assert::assertNotEmpty($payload['delta'], 'delta is empty.');
 
         foreach ($payload['delta'] as $entry) {
             self::assertDeltaEntry($entry);
@@ -89,31 +89,31 @@ trait EventFormatAssertions
      */
     public static function assertDeltaEntry(mixed $entry): void
     {
-        Assert::assertIsArray($entry, 'Ein Eintrag in delta ist kein Objekt.');
+        Assert::assertIsArray($entry, 'An entry in delta is not an object.');
         self::assertNonEmptyString($entry['field'] ?? null, 'field');
         Assert::assertContains($entry['operation'] ?? null, ['changed', 'added', 'removed'], 'operation');
 
         $masked = array_key_exists('masked', $entry);
 
         if ($masked) {
-            Assert::assertTrue($entry['masked'], 'masked ist nicht true.');
+            Assert::assertTrue($entry['masked'], 'masked is not true.');
         }
 
         if ($masked && $entry['operation'] === 'changed') {
-            Assert::assertSame(['field', 'operation', 'masked'], array_keys($entry), 'Felder eines maskierten Eintrags');
+            Assert::assertSame(['field', 'operation', 'masked'], array_keys($entry), 'Fields of a masked entry');
 
             return;
         }
 
         $keys = ['field', 'operation', 'oldValue', 'newValue'];
-        Assert::assertSame($masked ? [...$keys, 'masked'] : $keys, array_keys($entry), 'Felder eines Eintrags in delta');
+        Assert::assertSame($masked ? [...$keys, 'masked'] : $keys, array_keys($entry), 'Fields of an entry in delta');
 
         if ($entry['operation'] === 'added') {
-            Assert::assertNull($entry['oldValue'], 'oldValue ist bei added nicht null.');
+            Assert::assertNull($entry['oldValue'], 'oldValue is not null for added.');
         }
 
         if ($entry['operation'] === 'removed') {
-            Assert::assertNull($entry['newValue'], 'newValue ist bei removed nicht null.');
+            Assert::assertNull($entry['newValue'], 'newValue is not null for removed.');
         }
     }
 
@@ -128,7 +128,7 @@ trait EventFormatAssertions
     {
         $payload = self::decodeEventBody($body);
 
-        Assert::assertSame(['id', 'timestamp', 'ticketId'], array_keys($payload), 'Felder von deleted');
+        Assert::assertSame(['id', 'timestamp', 'ticketId'], array_keys($payload), 'Fields of deleted');
         self::assertFeedbackFields($payload);
 
         return $payload;
@@ -145,7 +145,7 @@ trait EventFormatAssertions
     {
         $payload = self::decodeEventBody($body);
 
-        Assert::assertSame(['id', 'timestamp', 'ticketId', 'reason'], array_keys($payload), 'Felder von deletion.failed');
+        Assert::assertSame(['id', 'timestamp', 'ticketId', 'reason'], array_keys($payload), 'Fields of deletion.failed');
         self::assertFeedbackFields($payload);
         self::assertNonEmptyString($payload['reason'], 'reason');
 
@@ -166,7 +166,7 @@ trait EventFormatAssertions
         Assert::assertSame(
             ['id', 'timestamp', 'ticketId'],
             array_slice(array_keys($payload), 0, 3),
-            'Erste Felder von deletion.processed',
+            'First fields of deletion.processed',
         );
         self::assertFeedbackFields($payload);
 
@@ -185,7 +185,7 @@ trait EventFormatAssertions
         self::assertNonEmptyString($payload['id'], 'id');
         self::assertEventTimestamp($payload['timestamp']);
         self::assertNonEmptyString($payload['ticketId'], 'ticketId');
-        Assert::assertArrayNotHasKey('actorId', $payload, 'Eine Rückmeldung trägt kein actorId.');
+        Assert::assertArrayNotHasKey('actorId', $payload, 'A feedback carries no actorId.');
     }
 
     /**
@@ -198,8 +198,8 @@ trait EventFormatAssertions
      */
     private static function assertNonEmptyString(mixed $value, string $field): void
     {
-        Assert::assertIsString($value, sprintf('%s ist kein String.', $field));
-        Assert::assertNotSame('', $value, sprintf('%s ist leer.', $field));
+        Assert::assertIsString($value, sprintf('%s is not a string.', $field));
+        Assert::assertNotSame('', $value, sprintf('%s is empty.', $field));
     }
 
     /**
@@ -214,11 +214,11 @@ trait EventFormatAssertions
         try {
             $payload = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            Assert::fail('Der Body ist kein gültiges JSON: ' . $exception->getMessage());
+            Assert::fail('The body is not valid JSON: ' . $exception->getMessage());
         }
 
-        Assert::assertIsArray($payload, 'Der Body ist kein JSON-Objekt.');
-        Assert::assertFalse(array_is_list($payload) && $payload !== [], 'Der Body ist kein JSON-Objekt.');
+        Assert::assertIsArray($payload, 'The body is not a JSON object.');
+        Assert::assertFalse(array_is_list($payload) && $payload !== [], 'The body is not a JSON object.');
 
         /** @var array<string, mixed> $payload */
         return $payload;

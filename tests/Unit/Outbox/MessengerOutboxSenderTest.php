@@ -84,27 +84,27 @@ final class MessengerOutboxSenderTest extends TestCase
      */
     public static function transportFailures(): iterable
     {
-        yield 'Verbindungsaufbau gescheitert' => [
+        yield 'connecting failed' => [
             new TransportException('x', 0, new AMQPConnectionException('x')),
             BrokerUnavailableException::class,
         ];
-        yield 'Verbindung ohne nähere Art abgebrochen' => [
+        yield 'connection broke without a specific type' => [
             new TransportException('x', 0, new AMQPException('x')),
             BrokerUnavailableException::class,
         ];
-        yield 'Fehler auf dem Kanal' => [
+        yield 'failure on the channel' => [
             new TransportException('x', 0, new AMQPChannelException('x')),
             MessageRejectedException::class,
         ];
-        yield 'Fehler am Exchange' => [
+        yield 'failure at the exchange' => [
             new TransportException('x', 0, new AMQPExchangeException('x')),
             MessageRejectedException::class,
         ];
-        yield 'Bestätigung bleibt aus' => [
+        yield 'confirmation missing' => [
             new TransportException('x', 0, new AMQPQueueException('x')),
             MessageRejectedException::class,
         ];
-        yield 'negative Bestätigung' => [new TransportException('nack'), MessageRejectedException::class];
+        yield 'negative acknowledgement' => [new TransportException('nack'), MessageRejectedException::class];
     }
 
     /**
