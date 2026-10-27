@@ -1,104 +1,111 @@
 # Message Bundle
 
-Symfony-8-Bundle für die Messaging-Infrastruktur von Microservices: Transactional Outbox, Anbindung an RabbitMQ, Retry beim Konsum, Löschaufträge mit Rückmeldung und Logging über AMQP.
+Symfony 8 bundle for the messaging infrastructure of microservices: transactional outbox, RabbitMQ connection, retries when consuming, deletion requests with feedback, and logging over AMQP.
 
-## Zweck
+## Purpose
 
-Microservices, die Domain Events über RabbitMQ austauschen, brauchen immer dieselben Teile: eine Outbox, die Events in derselben Transaktion wie die Zustandsänderung festhält, einen Publisher, der sie zuverlässig und in der richtigen Reihenfolge zustellt, Consumer, die technische Fehler wiederholen und kaputte Nachrichten in die Dead-Letter-Queue schicken, und ein Logging, das nie eine Anfrage scheitern lässt. Das Bundle setzt diese Teile einmal um, damit nicht jeder Service sie selbst nachbaut.
+Microservices that exchange domain events over RabbitMQ keep needing the same parts:
 
-Grundsätze:
+- an outbox that stores events in the same transaction as the state change;
+- a publisher that delivers them reliably and in the right order;
+- consumers that retry technical failures and send broken messages to the dead-letter queue;
+- logging that never makes a request fail.
 
-- Feste Regeln (Anzahl der Versuche, Wartezeiten, AMQP-Properties, Tabellenschema) sind eingebaut und nicht konfigurierbar. Konfigurierbar ist nur, was sich je Service unterscheidet.
-- Der Core eines Service hängt nicht vom Bundle ab. Das Bundle wird nur aus der Infrastruktur- und der Schnittstellenschicht genutzt.
-- Für das Event-Format und das Verhalten bei Löschaufträgen liefert das Bundle Assertions und einen Vertragstest, damit jeder Service sein Verhalten gegen dieselben Regeln prüft.
+The bundle implements these parts once so that no service has to rebuild them.
 
-## Funktionen
+Principles:
 
-- **Transactional Outbox:** Events landen in derselben Datenbanktransaktion wie die Zustandsänderung in der Tabelle `outbox_entries`; ein Konsolenkommando stellt sie mit Publisher Confirms zu.
-- **Zustellung in Reihenfolge:** je Aggregat in der Reihenfolge der Entstehung; ein nicht zugestellter Eintrag hält spätere Einträge desselben Aggregats zurück.
-- **Fehlerbehandlung beim Veröffentlichen:** ein nicht erreichbarer Broker zählt nicht als Fehlversuch; nach 10 abgelehnten Versuchen erhält ein Eintrag den Status `failed` und lässt sich per Kommando wieder anstoßen.
-- **Retry beim Konsum:** bis zu 10 Versuche im selben Prozess mit festen Wartezeiten, danach Ablehnung ohne Requeue in die Dead-Letter-Queue.
-- **Löschaufträge:** Strukturprüfung eingehender Aufträge, strukturell ungültige Aufträge gehen ohne Wiederholung in die Dead-Letter-Queue.
-- **Logging über AMQP:** Monolog-Handler, der erst bei Bedarf verbindet, jeden Fehler abfängt und nach einem Fehler eine Pause einlegt; dazu ein Processor, der sensible Felder aus den Logs hält.
-- **Test-Hilfen:** Assertions für Event- und Nachrichtenformat, Vertragstest für Löschaufträge, Test-Doubles für Outbox und Transports.
+- Fixed rules (number of attempts, waiting times, AMQP properties, table schema) are built in and not configurable. Only what differs per service can be configured.
+- The core of a service does not depend on the bundle. The bundle is used only from the infrastructure and interface layers.
+- For the event format and the handling of deletion requests, the bundle provides assertions and a contract test, so that every service checks its behaviour against the same rules.
 
-## Schichtgrenze
+## Features
 
-| Schicht des Service | Nutzt das Bundle | Bleibt im Service |
+- **Transactional outbox:** events are written to the table `outbox_entries` in the same database transaction as the state change; a console command delivers them with publisher confirms.
+- **Ordered delivery:** per aggregate in the order the events were created; an undelivered entry holds back later entries of the same aggregate.
+- **Error handling when publishing:** an unreachable broker does not count as a failed attempt; after 10 rejected attempts an entry gets the status `failed` and can be retried with a command.
+- **Retries when consuming:** up to 10 attempts in the same process with fixed waiting times, then rejection without requeue into the dead-letter queue.
+- **Deletion requests:** structural validation of incoming requests; structurally invalid requests go to the dead-letter queue without retries.
+- **Logging over AMQP:** a Monolog handler that connects lazily, catches every failure and pauses after a failure; plus a processor that keeps sensitive fields out of the logs.
+- **Test helpers:** assertions for the event and message format, a contract test for deletion requests, test doubles for the outbox and transports.
+
+## Layer boundary
+
+| Layer of the service | Uses the bundle | Stays in the service |
 |---|---|---|
-| Domain | nein | Domain Events, Erzeugung des `delta`, verarbeitete Löschaufträge und ihr Repository-Interface |
-| Application | nein | Outbox-Interface, Transaktions-Interface, Ablauf eines Löschauftrags |
-| Infrastructure | ja | Adapter, der das Outbox-Interface über `OutboxWriter` umsetzt; Transaktion, ID-Erzeugung, Repository der verarbeiteten Löschaufträge |
-| Schnittstelle | ja | Event-Consumer: bildet aus der Nachricht ein Command und ruft den Service über `RetryingExecutor` auf |
+| Domain | no | Domain events, building the `delta`, processed deletion requests and their repository interface |
+| Application | no | Outbox interface, transaction interface, handling of a deletion request |
+| Infrastructure | yes | Adapter that implements the outbox interface via `OutboxWriter`; transaction, ID generation, repository of processed deletion requests |
+| Interface | yes | Event consumer: builds a command from the message and calls the service via `RetryingExecutor` |
 
-## Aufbau
+## Structure
 
 ```
 src/
   MessageBundle.php
   DependencyInjection/
-    Configuration.php              Konfiguration unter dem Schlüssel message
-    MessageExtension.php           Services laden, framework.messenger und doctrine vorbelegen
+    Configuration.php              configuration under the key message
+    MessageExtension.php           loads services, prepends framework.messenger and doctrine
   Resources/config/
-    services.php                   Verbindung, Serializer, Retry, Logging
-    outbox.php                     Outbox, nur bei message.outbox.enabled
+    services.php                   connection, serializers, retries, logging
+    outbox.php                     outbox, only with message.outbox.enabled
   Connection/
-    RabbitMqConfig.php             RABBITMQ_* einschließlich TLS und Heartbeat
-    RabbitMqTransportFactory.php   Messenger-Transport für den DSN rabbitmq-env://
+    RabbitMqConfig.php             RABBITMQ_* including TLS and heartbeat
+    RabbitMqTransportFactory.php   Messenger transport for the DSN rabbitmq-env://
   Message/
-    AmqpProperties.php             AMQP-Properties jeder Nachricht
-    RawMessage.php                 Body einer Nachricht, wie er an RabbitMQ geht
-    BodySerializer.php             Body ist das Payload, keine Header
+    AmqpProperties.php             AMQP properties of every message
+    RawMessage.php                 message body as it is sent to RabbitMQ
+    BodySerializer.php             body is the payload, no headers
   Persistence/
-    UtcDateTimeMsType.php          Custom Type message_utc_datetime_ms, DATETIME(3) in UTC
+    UtcDateTimeMsType.php          custom type message_utc_datetime_ms, DATETIME(3) in UTC
   Outbox/
-    Entity/OutboxEntry.php         Tabelle outbox_entries
+    Entity/OutboxEntry.php         table outbox_entries
     Entity/OutboxStatus.php        pending, failed
-    OutboxWriter.php               append() ohne flush
-    ExchangeResolver.php           Event-Typ -> Exchange
-    OutboxEntryStore.php           Interface
+    OutboxWriter.php               append() without flush
+    ExchangeResolver.php           event type -> exchange
+    OutboxEntryStore.php           interface
     DoctrineOutboxEntryStore.php
-    OutboxSender.php               Interface
-    MessengerOutboxSender.php      Publisher Confirms, Fehlerklassifikation
+    OutboxSender.php               interface
+    MessengerOutboxSender.php      publisher confirms, failure classification
     BrokerUnavailableException.php
     MessageRejectedException.php
     OutboxPublisher.php
     PublishResult.php
-    Command/PublishOutboxCommand.php       <namensraum>:publish
-    Command/RetryFailedOutboxCommand.php   <namensraum>:retry-failed
+    Command/PublishOutboxCommand.php       <namespace>:publish
+    Command/RetryFailedOutboxCommand.php   <namespace>:retry-failed
   Consumer/
-    RetryingExecutor.php           Wiederholung im selben Prozess
+    RetryingExecutor.php           retries in the same process
   Deletion/
     DeletionRequest.php            id, ticketId
-    DeletionRequestSerializer.php  Strukturprüfung
+    DeletionRequestSerializer.php  structural validation
   Logging/
     AmqpExchangeFactoryInterface.php
-    AmqpExchangeFactory.php        Verbindung für die Log-Events
-    AmqpLogHandler.php             Handler für Monolog
-    LogEventAmqpHandler.php        nativer AmqpHandler mit Routing-Key und Properties (intern)
+    AmqpExchangeFactory.php        connection for the log events
+    AmqpLogHandler.php             handler for Monolog
+    LogEventAmqpHandler.php        native AmqpHandler with routing key and properties (internal)
     SensitiveFieldRedactionProcessor.php
   Testing/
-    EventFormatAssertions.php      Trait, Event-Format
-    AmqpMessageAssertions.php      Trait, Nachrichtenformat
-    DeletionRequestContract.php    Trait, Vertragstest für Löschaufträge
+    EventFormatAssertions.php      trait, event format
+    AmqpMessageAssertions.php      trait, message format
+    DeletionRequestContract.php    trait, contract test for deletion requests
     InMemoryOutboxEntryStore.php
     ScriptedOutboxSender.php
     RecordingMessengerSender.php
 tests/
-  Unit/                            je Komponente
-  Integration/                     Symfony-Kernel mit Doctrine (SQLite), Monolog und In-Memory-Transports
+  Unit/                            per component
+  Integration/                     Symfony kernel with Doctrine (SQLite), Monolog and in-memory transports
 ```
 
-## Voraussetzungen
+## Requirements
 
-- PHP 8.5+, Extensions `amqp`, `json`, `openssl`
+- PHP 8.5+, extensions `amqp`, `json`, `openssl`
 - Symfony 8.0+ (`framework-bundle`, `messenger`, `amqp-messenger`, `clock`, `console`, `uid`, `doctrine-bridge`)
 - Doctrine ORM 3.7+, DBAL 4.5+, DoctrineBundle 3.3+
 - Monolog 3.12+, MonologBundle 4.1+
 
 ## Installation
 
-Über das VCS-Repository:
+Via the VCS repository:
 
 ```json
 "repositories": [
@@ -109,28 +116,28 @@ tests/
 }
 ```
 
-Bundle in `config/bundles.php` eintragen:
+Register the bundle in `config/bundles.php`:
 
 ```php
 ACAT\MessageBundle\MessageBundle::class => ['all' => true],
 ```
 
-Die Tabelle `outbox_entries` entsteht aus dem Mapping des Bundles mit `doctrine:migrations:diff` in den Migrationen des Service.
+The table `outbox_entries` is created from the bundle's mapping with `doctrine:migrations:diff` in the service's migrations.
 
-## Konfiguration
+## Configuration
 
-### Umgebungsvariablen
+### Environment variables
 
-| Variable | Bedeutung | Standard |
+| Variable | Meaning | Default |
 |---|---|---|
-| `RABBITMQ_HOST` | Hostname von RabbitMQ | – |
+| `RABBITMQ_HOST` | RabbitMQ host name | – |
 | `RABBITMQ_PORT` | Port | – |
-| `RABBITMQ_USER` | Benutzername am Broker | – |
-| `RABBITMQ_PASSWORD` | Passwort | – |
-| `RABBITMQ_VHOST` | Virtual Host | – |
-| `RABBITMQ_SECURE` | `true` für TLS (`amqps`) | – |
-| `RABBITMQ_HEARTBEAT` | Heartbeat-Intervall in Sekunden | `60` |
-| `RABBITMQ_RETRY` | Versuche je konsumierter Nachricht, auf 1 bis 10 begrenzt | `10` |
+| `RABBITMQ_USER` | User name at the broker | – |
+| `RABBITMQ_PASSWORD` | Password | – |
+| `RABBITMQ_VHOST` | Virtual host | – |
+| `RABBITMQ_SECURE` | `true` for TLS (`amqps`) | – |
+| `RABBITMQ_HEARTBEAT` | Heartbeat interval in seconds | `60` |
+| `RABBITMQ_RETRY` | Attempts per consumed message, limited to 1–10 | `10` |
 
 ### Bundle
 
@@ -148,28 +155,28 @@ message:
         redact_fields: [firstName, lastName, dateOfBirth]
 ```
 
-| Option | Standard | Bedeutung |
+| Option | Default | Meaning |
 |---|---|---|
-| `service` | – (Pflicht) | Name des Service; Name des eigenen Exchange, AMQP-Property `app_id` und Teil des Routing-Keys der Log-Events |
-| `outbox.enabled` | `true` | Outbox, Publisher, Kommandos und die Transports zum Veröffentlichen |
-| `outbox.central_exchange` | `null` | Zentraler Exchange für die Änderungsereignisse; ohne ihn gehen alle Events an den Exchange des Service |
-| `outbox.central_event_types` | `['*.created', '*.updated']` | Event-Typen für den zentralen Exchange; `*` steht für genau ein Wort |
-| `outbox.command_namespace` | `outbox` | Namensraum der Kommandos, z. B. `billing:outbox` für `billing:outbox:publish` |
-| `consumers.<transport>.queue` | – | Queue des Transports; ein Eintrag je Queue |
-| `consumers.<transport>.serializer` | `DeletionRequestSerializer` | Transport-Serializer; für andere eingehende Nachrichten ein eigener |
-| `logging.enabled` | `true` | `AmqpLogHandler`; in der Umgebung `test` immer abgeschaltet |
-| `logging.redact_fields` | `[]` | Felder, deren Werte nicht ins Log gelangen; leer bedeutet ohne Redaction-Processor |
+| `service` | – (required) | Name of the service; name of its own exchange, AMQP property `app_id` and part of the routing key of the log events |
+| `outbox.enabled` | `true` | Outbox, publisher, commands and the transports for publishing |
+| `outbox.central_exchange` | `null` | Central exchange for change events; without it, all events go to the service's exchange |
+| `outbox.central_event_types` | `['*.created', '*.updated']` | Event types for the central exchange; `*` stands for exactly one word |
+| `outbox.command_namespace` | `outbox` | Namespace of the commands, e.g. `billing:outbox` for `billing:outbox:publish` |
+| `consumers.<transport>.queue` | – | Queue of the transport; one entry per queue |
+| `consumers.<transport>.serializer` | `DeletionRequestSerializer` | Transport serializer; use your own for other incoming messages |
+| `logging.enabled` | `true` | `AmqpLogHandler`; always disabled in the `test` environment |
+| `logging.redact_fields` | `[]` | Fields whose values must not reach the log; empty means no redaction processor |
 
-Das Bundle belegt per Prepend vor:
+The bundle prepends:
 
 - `framework.messenger`:
-  - Standardbus ohne `reject_redelivered_message_middleware`, damit eine erneut zugestellte Nachricht nicht ohne Verarbeitung in der Dead-Letter-Queue landet;
-  - je Exchange ein Transport zum Veröffentlichen, benannt nach dem Exchange in snake_case (z. B. `person_service`, `domain_events`), Typ `topic`, `queues: []`, `confirm_timeout: 10`, `auto_setup: false`;
-  - je Eintrag unter `consumers` ein Transport mit `max_retries: 0` und `auto_setup: false`;
-  - in der Umgebung `test` `in-memory://` für alle Transports.
-- `doctrine`: Mapping von `OutboxEntry` und der Custom Type `message_utc_datetime_ms`.
+  - the default bus without `reject_redelivered_message_middleware`, so that a redelivered message does not end up in the dead-letter queue without being processed;
+  - one transport per exchange for publishing, named after the exchange in snake_case (e.g. `person_service`, `domain_events`), type `topic`, `queues: []`, `confirm_timeout: 10`, `auto_setup: false`;
+  - one transport per entry under `consumers` with `max_retries: 0` and `auto_setup: false`;
+  - `in-memory://` for all transports in the `test` environment.
+- `doctrine`: the mapping of `OutboxEntry` and the custom type `message_utc_datetime_ms`.
 
-Exchanges, Queues und Bindings deklariert das Bundle nicht (`auto_setup: false`); die Topologie am Broker wird außerhalb des Service gepflegt.
+The bundle does not declare exchanges, queues or bindings (`auto_setup: false`); the broker topology is maintained outside the service.
 
 ### Monolog
 
@@ -182,73 +189,91 @@ monolog:
             channels: ['!doctrine']
 ```
 
-## Komponenten
+## Components
 
-### Nachrichtenformat
+### Message format
 
-Jede veröffentlichte Nachricht trägt die AMQP-Properties `message_id` (UUID v7 des Outbox-Eintrags, bei erneuter Zustellung unverändert; bei Log-Events eine neue je Eintrag), `type` (Routing-Key), `app_id` (Name des Service), `content_type` (`application/json`), `timestamp` (Unix-Sekunden) und `delivery_mode` `2`. Der Body ist das Payload unverändert, ohne Header von Symfony Messenger. Der `SigningSerializer` von Symfony 8.1, der jeden Transport-Serializer umhüllt, reicht unverändert durch, solange keine signierten Nachrichtentypen konfiguriert sind.
+Every published message carries these AMQP properties:
+
+- `message_id`: UUID v7 of the outbox entry, unchanged on redelivery; a new one per entry for log events
+- `type`: the routing key
+- `app_id`: name of the service
+- `content_type`: `application/json`
+- `timestamp`: Unix seconds
+- `delivery_mode`: `2`
+
+The body is the payload unchanged, without Symfony Messenger headers. Symfony 8.1 wraps every transport serializer in a `SigningSerializer`; it passes messages through unchanged as long as no signed message types are configured.
 
 ### Outbox
 
-- `OutboxEntry` bildet die Tabelle `outbox_entries` ab: `id` (`BINARY(16)`, UUID v7), `aggregate_id`, `event_type`, `exchange`, `payload` (`LONGTEXT`), `status`, `attempts`, `created_at` (`DATETIME(3)`), Index `idx_outbox_entries_status_created_at`.
-- Das Payload liegt als Text vor. In einer `JSON`-Spalte würde MySQL die Schlüssel umsortieren; als Text bleiben Feldreihenfolge und leere Objekte erhalten.
-- `OutboxWriter::append(string $eventType, string $aggregateId, array $payload): OutboxEntry` kodiert das Payload mit festen Flags (`JSON_THROW_ON_ERROR`, `JSON_UNESCAPED_SLASHES`, `JSON_UNESCAPED_UNICODE`, `JSON_PRESERVE_ZERO_FRACTION`) und persistiert den Eintrag ohne `flush`; geschrieben wird mit der Transaktion des Service. `created_at` ist der Zeitpunkt aus der UUID v7. Ein leeres Objekt steht im Payload als `stdClass`, da ein leeres PHP-Array als `[]` kodiert würde.
+- `OutboxEntry` maps the table `outbox_entries`: `id` (`BINARY(16)`, UUID v7), `aggregate_id`, `event_type`, `exchange`, `payload` (`LONGTEXT`), `status`, `attempts`, `created_at` (`DATETIME(3)`), index `idx_outbox_entries_status_created_at`.
+- The payload is stored as text. In a `JSON` column, MySQL would reorder the keys; as text, field order and empty objects are preserved.
+- `OutboxWriter::append(string $eventType, string $aggregateId, array $payload): OutboxEntry`:
+  - encodes the payload with fixed flags (`JSON_THROW_ON_ERROR`, `JSON_UNESCAPED_SLASHES`, `JSON_UNESCAPED_UNICODE`, `JSON_PRESERVE_ZERO_FRACTION`);
+  - persists the entry without `flush`, so it is written with the service's transaction;
+  - sets `created_at` to the time from the UUID v7;
+  - an empty object in the payload must be a `stdClass`, as an empty PHP array would be encoded as `[]`.
 - `OutboxPublisher`:
-  - liest alle Einträge, sortiert nach `created_at`, bei Gleichstand nach `id`;
-  - überspringt alle späteren Einträge einer `aggregate_id`, deren früherer Eintrag gescheitert ist oder auf `failed` steht;
-  - bricht ab, wenn RabbitMQ nicht erreichbar ist, ohne die Versuchszähler zu erhöhen;
-  - erhöht `attempts`, wenn der Broker eine Nachricht ablehnt oder nicht innerhalb von 10 Sekunden bestätigt, und setzt nach dem 10. Fehlversuch `failed` mit einem Eintrag im Log auf Level `error`;
-  - löscht einen Eintrag unmittelbar nach der Bestätigung; der Log-Context enthält nie das Payload.
-- `<namensraum>:publish` startet einen Lauf, z. B. stündlich per Cron. `<namensraum>:retry-failed [<id>]` setzt `failed` auf `pending` und `attempts` auf 0, für alle Einträge in einem `UPDATE`.
+  - reads all entries, ordered by `created_at`, then by `id`;
+  - skips all later entries of an `aggregate_id` whose earlier entry failed or has the status `failed`;
+  - aborts when RabbitMQ is unreachable, without increasing the attempt counters;
+  - increases `attempts` when the broker rejects a message or does not confirm it within 10 seconds, and sets `failed` after the 10th failed attempt with a log entry at level `error`;
+  - deletes an entry right after the confirmation; the log context never contains the payload.
+- `<namespace>:publish` starts a run, e.g. hourly via cron. `<namespace>:retry-failed [<id>]` sets `failed` back to `pending` and `attempts` to 0, for all entries in one `UPDATE`.
 
 ### Consumer
 
 `RetryingExecutor::run(callable $operation, array $context = [])`:
 
-- höchstens `RABBITMQ_RETRY` Versuche;
-- Wartezeiten 1, 2, 4, 8, 8, 8, 8, 8, 8 Sekunden über `Symfony\Component\Clock\ClockInterface`, zusammen 55 Sekunden;
-- jeder Fehlversuch mit Level `warning` im Log, zusammen mit `$context`;
-- vor jedem weiteren Versuch `ManagerRegistry::resetManager()`, da Doctrine den EntityManager nach einem Fehler schließt;
-- nach dem letzten Fehlversuch `UnrecoverableMessageHandlingException`; die Nachricht wird ohne Requeue abgelehnt und landet über den Dead-Letter-Exchange der Queue in der Dead-Letter-Queue.
+- at most `RABBITMQ_RETRY` attempts;
+- waiting times of 1, 2, 4, 8, 8, 8, 8, 8, 8 seconds via `Symfony\Component\Clock\ClockInterface`, 55 seconds in total;
+- every failed attempt is logged at level `warning`, together with `$context`;
+- before each further attempt `ManagerRegistry::resetManager()`, since Doctrine closes the EntityManager after a failure;
+- after the last failed attempt an `UnrecoverableMessageHandlingException`; the message is rejected without requeue and ends up in the dead-letter queue via the queue's dead-letter exchange.
 
-`RABBITMQ_HEARTBEAT` sollte mindestens 60 Sekunden betragen, damit der Broker die Verbindung während der Wiederholungen nicht schließt.
+`RABBITMQ_HEARTBEAT` should be at least 60 seconds so that the broker does not close the connection during the retries.
 
-### Löschaufträge
+### Deletion requests
 
-Ein Löschauftrag hat das Payload `id` und `ticketId`. `DeletionRequestSerializer` lehnt strukturell ungültige Aufträge ohne Wiederholung ab: Payload leer, kein JSON oder kein JSON-Objekt; `id` oder `ticketId` fehlt, ist leer, kein String oder länger als 255 Zeichen. Unbekannte Felder werden ignoriert. Eine `id`, die keine UUID ist, gilt nicht als strukturell ungültig; sie geht an den Service, der sie fachlich als nicht vorhanden beantwortet.
+A deletion request has the payload `id` and `ticketId`. `DeletionRequestSerializer` rejects structurally invalid requests without retries:
 
-Ein Service mit mehreren Auftragstypen richtet je Queue einen Eintrag unter `consumers` ein; alle liefern `DeletionRequest`, die Handler unterscheiden sich über `#[AsMessageHandler(fromTransport: ...)]`.
+- the payload is empty, not JSON or not a JSON object;
+- `id` or `ticketId` is missing, empty, not a string or longer than 255 characters.
+
+Unknown fields are ignored. An `id` that is not a UUID does not count as structurally invalid; it is passed to the service, which answers it as not found.
+
+A service with several request types sets up one entry under `consumers` per queue. All of them deliver `DeletionRequest`; the handlers are told apart with `#[AsMessageHandler(fromTransport: ...)]`.
 
 ### Logging
 
-- `AmqpLogHandler` (Service-ID `message.logging.amqp_handler`) kapselt den nativen `Monolog\Handler\AmqpHandler`:
-  - baut die Verbindung erst beim ersten Log-Eintrag auf, Zeitlimit 3 Sekunden für Verbindungsaufbau und Senden;
-  - Routing-Key `{level}.<service>`, unabhängig vom Channel; Exchange ist der des Service;
-  - fängt jeden Fehler beim Verbindungsaufbau und beim Senden ab; scheitert eine offene Verbindung, wird für den Eintrag einmal neu verbunden, danach 60 Sekunden lang keine Einträge an RabbitMQ;
-  - ersetzt eine Verbindung, die ein Heartbeat-Intervall lang ungenutzt war;
-  - ist in der Umgebung `test` immer abgeschaltet.
-- `SensitiveFieldRedactionProcessor` ersetzt in `context` und `extra` rekursiv die Werte der konfigurierten Felder durch `***REDACTED***` und wird für alle Channels registriert, sobald `logging.redact_fields` Felder nennt.
+- `AmqpLogHandler` (service ID `message.logging.amqp_handler`) wraps the native `Monolog\Handler\AmqpHandler`:
+  - connects only with the first log entry, with a 3-second timeout for connecting and sending;
+  - routing key `{level}.<service>`, regardless of the channel; the exchange is the service's own;
+  - catches every failure when connecting and sending; if an open connection fails, it reconnects once for the entry, then sends no entries to RabbitMQ for 60 seconds;
+  - replaces a connection that was idle for a heartbeat interval;
+  - is always disabled in the `test` environment.
+- `SensitiveFieldRedactionProcessor` recursively replaces the values of the configured fields in `context` and `extra` with `***REDACTED***`. It is registered for all channels as soon as `logging.redact_fields` lists any fields.
 
-### Event-Format der Test-Hilfen
+### Event format checked by the test helpers
 
-`EventFormatAssertions` prüft dieses Format:
+`EventFormatAssertions` checks this format:
 
-| Event | Felder in dieser Reihenfolge |
+| Event | Fields in this order |
 |---|---|
-| `<entität>.created` | `id`, `actorId`, `timestamp` |
-| `<entität>.updated` | `id`, `actorId`, `timestamp`, `delta` |
-| `<entität>.deleted` | `id`, `timestamp`, `ticketId` |
-| `<entität>.deletion.failed` | `id`, `timestamp`, `ticketId`, `reason` |
-| `<gegenstand>.deletion.processed` | `id`, `timestamp`, `ticketId`, danach servicespezifische Felder |
+| `<entity>.created` | `id`, `actorId`, `timestamp` |
+| `<entity>.updated` | `id`, `actorId`, `timestamp`, `delta` |
+| `<entity>.deleted` | `id`, `timestamp`, `ticketId` |
+| `<entity>.deletion.failed` | `id`, `timestamp`, `ticketId`, `reason` |
+| `<subject>.deletion.processed` | `id`, `timestamp`, `ticketId`, then service-specific fields |
 
-- `timestamp` in UTC nach RFC 3339 mit Millisekunden und `Z`, z. B. `2026-07-21T10:00:00.000Z`.
-- Ein Eintrag in `delta` hat `field`, `operation` (`changed`, `added`, `removed`), `oldValue` und `newValue`; bei `added` ist `oldValue` `null`, bei `removed` `newValue` `null`.
-- Ein maskierter Eintrag (`masked: true`) einer Feldänderung hat nur `field`, `operation` und `masked`.
-- Rückmeldungen zu Löschaufträgen tragen kein `actorId`.
+- `timestamp` in UTC per RFC 3339 with milliseconds and `Z`, e.g. `2026-07-21T10:00:00.000Z`.
+- An entry in `delta` has `field`, `operation` (`changed`, `added`, `removed`), `oldValue` and `newValue`; for `added`, `oldValue` is `null`, for `removed`, `newValue` is `null`.
+- A masked entry (`masked: true`) for a field change has only `field`, `operation` and `masked`.
+- Feedback on deletion requests carries no `actorId`.
 
-## Einbindung im Service
+## Usage in a service
 
-Adapter für die Outbox (Infrastruktur):
+Outbox adapter (infrastructure):
 
 ```php
 final readonly class DoctrineOutbox implements OutboxInterface
@@ -264,7 +289,7 @@ final readonly class DoctrineOutbox implements OutboxInterface
 }
 ```
 
-Event-Consumer für den Löschauftrag (Schnittstelle):
+Event consumer for deletion requests (interface):
 
 ```php
 #[AsMessageHandler(fromTransport: 'deletion_requests')]
@@ -284,7 +309,7 @@ final readonly class DeletionRequestHandler
 }
 ```
 
-Vertragstest für Löschaufträge (Tests des Service):
+Contract test for deletion requests (the service's tests):
 
 ```php
 final class DeletionRequestTest extends KernelTestCase
@@ -292,29 +317,29 @@ final class DeletionRequestTest extends KernelTestCase
     use DeletionRequestContract;
 
     protected function deletionEntityName(): string { return 'person'; }
-    protected function createEntityForDeletion(): string { /* Person anlegen, id liefern */ }
-    protected function handleDeletionRequest(DeletionRequest $request): void { /* Handler aufrufen */ }
-    protected function publishedDeletionFeedback(): array { /* Event-Name und Body je Rückmeldung */ }
-    protected function assertEntityDeleted(string $id): void { /* Löschung prüfen */ }
+    protected function createEntityForDeletion(): string { /* create a person, return its id */ }
+    protected function handleDeletionRequest(DeletionRequest $request): void { /* call the handler */ }
+    protected function publishedDeletionFeedback(): array { /* event name and body per feedback */ }
+    protected function assertEntityDeleted(string $id): void { /* check the deletion */ }
 }
 ```
 
-Ein lauffähiges Beispiel steht in `tests/Unit/Testing/DeletionRequestContractTest.php`.
+A working example is in `tests/Unit/Testing/DeletionRequestContractTest.php`.
 
-## Entwicklung
+## Development
 
-Die Tests brauchen PHP 8.5 mit den Extensions `amqp` und `pdo_sqlite`. Ohne sie lokal laufen sie in einem Docker-Image, das beides mitbringt:
+The tests need PHP 8.5 with the extensions `amqp` and `pdo_sqlite`. Without them locally, run the tests in a Docker image that has both:
 
 ```bash
-docker run --rm -v "$PWD":/app -w /app --entrypoint composer <php-image-mit-amqp> install
+docker run --rm -v "$PWD":/app -w /app --entrypoint composer <php-image-with-amqp> install
 ```
 
 ```bash
-docker run --rm -v "$PWD":/app -w /app --entrypoint vendor/bin/phpunit <php-image-mit-amqp>
+docker run --rm -v "$PWD":/app -w /app --entrypoint vendor/bin/phpunit <php-image-with-amqp>
 ```
 
 ```bash
-docker run --rm -v "$PWD":/app -w /app --entrypoint vendor/bin/phpstan <php-image-mit-amqp> analyse
+docker run --rm -v "$PWD":/app -w /app --entrypoint vendor/bin/phpstan <php-image-with-amqp> analyse
 ```
 
-PHPStan läuft auf Level `max` über `src` und `tests`.
+PHPStan runs at level `max` over `src` and `tests`.
